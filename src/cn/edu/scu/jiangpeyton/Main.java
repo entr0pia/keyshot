@@ -1,20 +1,21 @@
 package cn.edu.scu.jiangpeyton;
 
 
+import cn.edu.scu.jiangpeyton.caclhash.ClassHash;
+import cn.edu.scu.jiangpeyton.caclhash.ClassHashMap;
 import cn.edu.scu.jiangpeyton.graph.CalleeGraph;
-import cn.edu.scu.jiangpeyton.graph.MethodsLocal;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import org.apache.commons.codec.binary.Hex;
 import soot.PackManager;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.options.Options;
-import soot.tagkit.Tag;
 
-import javax.swing.text.html.HTML;
 import java.io.File;
-import java.sql.Time;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +25,7 @@ public class Main {
 
     static private List<String> apks;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoSuchAlgorithmException {
         // write your code here
         //初始化目录
         init();
@@ -70,19 +71,21 @@ public class Main {
             PackManager.v().runPacks();
 
             CalleeGraph calleeGraph = new CalleeGraph(apk);
-            /*
-            for (SootClass sootClass : Scene.v().getClasses()) {
+
+            /*for (SootClass sootClass : Scene.v().getClasses()) {
                 if (sootClass.toString().contains("example")) {
-                    for (SootMethod sootMethod : sootClass.getMethods()) {
-                        MethodsLocal methodsLocal = new MethodsLocal(sootMethod);
-                        System.out.println(LocalTime.now());
-                    }
+                    ClassHash hash = new ClassHash(sootClass, calleeGraph.calleeMap);
+
+                    System.out.println(sootClass.getName()+": "+hash.getHash());
                 }
-            }
-             */
-            System.out.println("End");
+            }*/
+            ClassHashMap map=new ClassHashMap(calleeGraph.calleeMap);
+            System.out.println("Map size = "+ map.hashMap.size());
         }
+
+        System.out.println("End");
     }
+
 
     static public void init() {
         //创建数据存储目录

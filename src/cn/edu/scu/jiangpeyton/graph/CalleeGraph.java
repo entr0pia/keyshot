@@ -1,22 +1,25 @@
 package cn.edu.scu.jiangpeyton.graph;
 
-import soot.*;
-import soot.jimple.toolkits.callgraph.CallGraph;
-import soot.jimple.toolkits.callgraph.Targets;
+import soot.Scene;
+import soot.SootClass;
+import soot.SootField;
+import soot.SootMethod;
 import soot.tagkit.StringConstantValueTag;
 import soot.tagkit.Tag;
+import soot.util.ArraySet;
 
 import java.util.*;
 
 public class CalleeGraph {
     private String strTypeName = "java.lang.String";
-    public CallGraph callGraph;
+    //public CallGraph callGraph;
     public Set<String> strSet;
     public Map<SootMethod, MethodsLocal> calleeMap;
 
     public CalleeGraph(String apk) {
         this.strSet = new HashSet<>();
 
+        findAllString();
         calleeMap = new HashMap<SootMethod, MethodsLocal>();
         for (SootClass sootClass : Scene.v().getClasses()) {
             for (SootMethod sootMethod : sootClass.getMethods()) {
@@ -27,12 +30,12 @@ public class CalleeGraph {
         }
 
 
-        callGraph = Scene.v().getCallGraph();
+        //callGraph = Scene.v().getCallGraph();
 
     }
 
 
-    public void sigMethod(SootMethod sootMethod) {
+    /*public void sigMethod(SootMethod sootMethod) {
         Iterator<MethodOrMethodContext> clees = new Targets(callGraph.edgesInto(sootMethod));
         if (clees != null) {
             while (clees.hasNext()) {
@@ -40,7 +43,7 @@ public class CalleeGraph {
                 System.out.println(clee.toString());
             }
         }
-    }
+    }*/
 
     public Set<String> findAllString() {
         for (SootClass sootClass : Scene.v().getClasses()) {
@@ -49,33 +52,22 @@ public class CalleeGraph {
         return strSet;
     }
 
-    public List<String> findClassString(SootClass sootClass) {
-        List<String> list = new ArrayList<>();
+    public Set<String> findClassString(SootClass sootClass) {
+        Set<String> subSet = new ArraySet<>();
 
         for (SootField field : sootClass.getFields()) {
             if (field.getType().toString().equals(this.strTypeName)) {
                 for (Tag tag : field.getTags()) {
                     try {
                         StringConstantValueTag tmp = (StringConstantValueTag) tag;
-                        list.add(tmp.getStringValue());
+                        subSet.add(tmp.getStringValue());
                     } catch (ClassCastException e) {
                         //System.out.println(e);
                     }
                 }
             }
         }
-
-        for (SootMethod sootMethod : sootClass.getMethods()) {
-            list.addAll(findMethodString(sootMethod));
-        }
-        return list;
+        return  subSet;
     }
-
-    public List<String> findMethodString(SootMethod method) {
-        List<String> list = new ArrayList<>();
-        // 待完成, 通过ActivityBody获得
-        return list;
-    }
-
 
 }

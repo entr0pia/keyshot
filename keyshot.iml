@@ -11,5 +11,6 @@
     <orderEntry type="library" name="soot-infoflow-android-classes" level="project" />
     <orderEntry type="library" name="com.beust:jcommander:1.72" level="project" />
     <orderEntry type="library" name="org.slf4j:slf4j-jdk14:1.7.12" level="project" />
+    <orderEntry type="library" name="commons-codec:commons-codec:1.14" level="project" />
   </component>
 </module>

@@ -12,17 +12,17 @@ import java.util.Set;
 
 public class MethodsLocal {
     // 传入参数, 局部变量, 调用方法, 返回值
-    public Type returnType;
     public List<Type> parameterTypes;
+    public List<Type> localVarTypes;
     public List<SootMethod> callees;
-    public List<Type> localVarType; // 仅包括立即数形式, 以防与形参和返回值重复
+    public Type returnType;
     public Set<String> localStr;
 
     public MethodsLocal(SootMethod method) {
         parameterTypes = method.getParameterTypes();
         returnType = method.getReturnType();
         callees = new ArrayList<>();
-        localVarType = new ArrayList<>();
+        localVarTypes = new ArrayList<>();
         localStr = new HashSet<>();
 
         if (!method.hasActiveBody()) {
@@ -70,12 +70,12 @@ public class MethodsLocal {
         Value right = stmt.getRightOp();
         Type type = left.getType();
         if (JimpleLocal.class.equals(left.getClass())) {
-            localVarType.add(left.getType());
+            localVarTypes.add(left.getType());
         }
         if (type.toString().equals("java.lang.String")) {
             if (StringConstant.class.equals(right.getClass())) {
                 localStr.add(((StringConstant) right).value);
-                localVarType.add(right.getType());
+                localVarTypes.add(right.getType());
             }
         }
         if(JVirtualInvokeExpr.class.equals(right.getClass())){
@@ -85,6 +85,7 @@ public class MethodsLocal {
             for(Value arg:virtualInvoke.getArgs()){
                 if(StringConstant.class.equals(arg.getClass())){
                     localStr.add(((StringConstant) arg).value);
+                    localVarTypes.add(((StringConstant) arg).getType());
                 }
             }
         }
