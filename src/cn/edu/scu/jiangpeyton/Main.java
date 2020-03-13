@@ -1,25 +1,21 @@
 package cn.edu.scu.jiangpeyton;
 
 
-import cn.edu.scu.jiangpeyton.caclhash.ClassHash;
 import cn.edu.scu.jiangpeyton.caclhash.ClassHashMap;
 import cn.edu.scu.jiangpeyton.graph.CalleeGraph;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import org.apache.commons.codec.binary.Hex;
 import soot.PackManager;
 import soot.Scene;
 import soot.SootClass;
-import soot.SootMethod;
 import soot.options.Options;
 
 import java.io.File;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
 
@@ -79,8 +75,13 @@ public class Main {
                     System.out.println(sootClass.getName()+": "+hash.getHash());
                 }
             }*/
-            ClassHashMap map=new ClassHashMap(calleeGraph.calleeMap);
-            System.out.println("Map size = "+ map.hashMap.size());
+            Map<String, SootClass> classHashMap = ClassHashMap.getHashMap(calleeGraph.calleeMap);
+            for (String hash : classHashMap.keySet()) {
+                String className=classHashMap.get(hash).toString();
+                if(className.contains("alibaba")){
+                    System.out.println(className+": "+hash);
+                }
+            }
         }
 
         System.out.println("End");
