@@ -13,32 +13,39 @@ import java.util.*;
 public class CalleeGraph {
     private String strTypeName = "java.lang.String";
     //public CallGraph callGraph;
-    public Set<String> strSet; // apk中所有字符串
-    public Map<SootMethod, MethodsLocal> calleeMap; // 函数调用关系图
+    //public Set<String> strSet = new HashSet<>(); // apk中所有字符串
+    public Map<SootMethod, MethodsLocal> calleeMap = new HashMap<SootMethod, MethodsLocal>(); // 函数调用关系图
+    public Map<SootClass, Set<String>> slicingStr = new HashMap<SootClass, Set<String>>(); // 基于切片的String集合
 
     public CalleeGraph(String apk) {
-        this.strSet = new HashSet<>();
-        this.calleeMap = new HashMap<SootMethod, MethodsLocal>();
 
-        findAllString();
+        //findAllString();
         for (SootClass sootClass : Scene.v().getClasses()) {
+            Set<String> methodLocalS = new ArraySet<>();
+
+            // 获取fields中的String变量
+            methodLocalS.addAll(findClassString(sootClass));
+
             for (SootMethod sootMethod : sootClass.getMethods()) {
                 MethodsLocal methodsLocal = new MethodsLocal(sootMethod); // 绘制函数调用图--邻接表
                 calleeMap.put(sootMethod, methodsLocal);
-                strSet.addAll(methodsLocal.localStr); //添加Method中的局部变量的字符串
+                //strSet.addAll(methodsLocal.localStr); //添加Method中的局部变量的字符串
+                methodLocalS.addAll(methodsLocal.localStr);
             }
+
+            this.slicingStr.put(sootClass, methodLocalS);
         }
     }
 
-    public Set<String> findAllString() {
-        /**
+    /*public Set<String> findAllString() {
+        *//**
          * 查找所有Class中的字符串
-         */
+         *//*
         for (SootClass sootClass : Scene.v().getClasses()) {
             this.strSet.addAll(findClassString(sootClass));
         }
         return strSet;
-    }
+    }*/
 
     public Set<String> findClassString(SootClass sootClass) {
         /**
