@@ -1,13 +1,11 @@
 package cn.edu.scu.jiangpeyton;
 
 
-import cn.edu.scu.jiangpeyton.caclhash.ClassHashMap;
-import cn.edu.scu.jiangpeyton.graph.CalleeGraph;
+import cn.edu.scu.jiangpeyton.filter.Markov;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import soot.PackManager;
 import soot.Scene;
-import soot.SootClass;
 import soot.options.Options;
 
 import java.io.File;
@@ -15,7 +13,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class Main {
 
@@ -50,9 +47,10 @@ public class Main {
             }
         }
 
+
         for (String apk : apks) {
             System.out.println(apk);
-
+            System.out.println(Markov.llEstimation("acetylcholinesterase"));
             soot.G.reset();
             Options.v().set_src_prec(Options.src_prec_apk);
             Options.v().set_process_dir(Collections.singletonList(apk));
@@ -66,7 +64,7 @@ public class Main {
             Scene.v().loadNecessaryClasses();
             PackManager.v().runPacks();
 
-            CalleeGraph calleeGraph = new CalleeGraph(apk);
+            //CalleeGraph calleeGraph = new CalleeGraph(apk);
 
             /*for (SootClass sootClass : Scene.v().getClasses()) {
                 if (sootClass.toString().contains("example")) {
@@ -75,14 +73,8 @@ public class Main {
                     System.out.println(sootClass.getName()+": "+hash.getHash());
                 }
             }*/
-            Map<String, SootClass> classHashMap = ClassHashMap.getHashMap(calleeGraph.calleeMap);
-            for (String hash : classHashMap.keySet()) {
-                String className=classHashMap.get(hash).toString();
-                if(className.contains("alibaba")){
-                    System.out.println(className+": "+hash);
-                }
-            }
         }
+
 
         System.out.println("End");
     }

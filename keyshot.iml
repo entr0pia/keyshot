@@ -12,5 +12,7 @@
     <orderEntry type="library" name="com.beust:jcommander:1.72" level="project" />
     <orderEntry type="library" name="org.slf4j:slf4j-jdk14:1.7.12" level="project" />
     <orderEntry type="library" name="commons-codec:commons-codec:1.14" level="project" />
+    <orderEntry type="library" name="org.apache.commons:commons-lang3:3.8.1" level="project" />
+    <orderEntry type="library" name="com.google.guava:guava:23.0" level="project" />
   </component>
 </module>
