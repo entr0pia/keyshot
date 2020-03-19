@@ -17,7 +17,7 @@ public class CalleeGraph {
     public Map<SootMethod, MethodsLocal> calleeMap = new HashMap<SootMethod, MethodsLocal>(); // 函数调用关系图
     public Map<SootClass, Set<String>> slicingStr = new HashMap<SootClass, Set<String>>(); // 基于切片的String集合
 
-    public CalleeGraph(String apk) {
+    public CalleeGraph() {
 
         //findAllString();
         for (SootClass sootClass : Scene.v().getClasses()) {

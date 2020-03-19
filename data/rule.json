@@ -1,0 +1,29 @@
+{
+    "profiles":[
+        {
+            "API":"OSS",
+            "Provider":"alibaba",
+            "Class":"com.alibaba.sdk.android.oss.OSSClient",
+            "method":"void <init>(android.content.Context,java.lang.String,com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider)",
+            "hash":[
+                "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            ],
+            "Key":{
+                "diff":false,
+                "Root":{
+                    "AccessID":{
+                        "pattern":"[a-zA-Z0-9]{24}",
+                        "entropy":40,
+                        "MLE":3
+                    },
+                    "SecretKey":{
+                        "pattern":"[a-zA-Z0-9]{30}",
+                        "entropy":50,
+                        "MLE":3
+                    }
+                },
+                "User":{}
+            }
+        }
+    ]
+}

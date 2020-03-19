@@ -46,7 +46,7 @@ public class Markov {
             last = i;
             P += Math.log(pij);
         }
-        return P / sub.length();
+        return -P / sub.length();
     }
 
     public static double getPij(char last, char c) {

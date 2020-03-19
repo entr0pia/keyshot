@@ -1,6 +1,8 @@
 package cn.edu.scu.jiangpeyton;
 
 
+import cn.edu.scu.jiangpeyton.caclhash.ClassHash;
+import cn.edu.scu.jiangpeyton.caclhash.ClassHashMap;
 import cn.edu.scu.jiangpeyton.filter.Markov;
 import cn.edu.scu.jiangpeyton.graph.CalleeGraph;
 import com.beust.jcommander.JCommander;
@@ -8,6 +10,7 @@ import com.beust.jcommander.ParameterException;
 import soot.PackManager;
 import soot.Scene;
 import soot.SootClass;
+import soot.SootMethod;
 import soot.options.Options;
 
 import java.io.File;
@@ -64,15 +67,20 @@ public class Main {
             Scene.v().loadNecessaryClasses();
             PackManager.v().runPacks();
 
-            CalleeGraph calleeGraph = new CalleeGraph(apk);
+            CalleeGraph calleeGraph = new CalleeGraph();
 
-            /*for (SootClass sootClass : Scene.v().getClasses()) {
-                if (sootClass.toString().contains("example")) {
+            for (SootClass sootClass : Scene.v().getClasses()) {
+                if (sootClass.getName().equals("com.alibaba.sdk.android.oss.OSSClient")) {
                     ClassHash hash = new ClassHash(sootClass, calleeGraph.calleeMap);
-
+                    SootMethod init = sootClass.getMethods().get(0);
                     System.out.println(sootClass.getName()+": "+hash.getHash());
+                    System.out.println(init.getSubSignature()+": "+ClassHashMap.methodHashMapRe.get(init));
+                    break;
                 }
-            }*/
+            }
+
+
+
         }
 
 
