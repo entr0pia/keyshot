@@ -1,36 +1,35 @@
 package cn.edu.scu.jiangpeyton.filter;
 
+import soot.util.ArraySet;
+
+import java.util.Set;
+import java.util.regex.Matcher;
+
 public class Markov {
-    public String string;
+    /**
+     * 一阶马尔可夫过程的对数似然过滤器
+     */
+    private String string;
+    private Set<String> stringSet = new ArraySet<>();
 
     public Markov(String s) {
         this.string = s;
+    }
+
+    public Markov(Set<String> input, double mle) {
+        this.stringSet.addAll(input);
+        for (String s : input) {
+            if (llEstimation(s) < mle) {
+                // 移除对数似然估计小于阈值的字符串
+                stringSet.remove(s);
+            }
+        }
     }
 
     public double llEstimation() {
         return llEstimation(this.string);
     }
 
-    /*public static double getEntropy(String s) {
-        String sub = s.toLowerCase().replaceAll("[0-9]", "");
-        double entropy = 0.0;
-        for (char i : sub.toCharArray()) {
-            Pattern pattern = Pattern.compile(new StringBuffer()
-                    .append(i)
-                    .append("[a-z]{1}")
-                    .toString());
-            Matcher matcher=pattern.matcher(sub);
-            double firstOrder = 0.0;
-            while (matcher.find()){
-                String ij=matcher.group();
-                double pij=Priori.firstOrderP.get(ij);
-                firstOrder+=pij*Math.log(pij);
-            }
-            double pi=StringUtils.countMatches(sub,i)/(double)sub.length();
-            entropy+=-pi*firstOrder;
-        }
-        return entropy;
-    }*/
 
     public static double llEstimation(String s) {
         String sub = s.replaceAll("[0-9]", "").toLowerCase();
@@ -61,5 +60,13 @@ public class Markov {
         key.append(last).append(c);
         pij = Priori.firstOrderP.get(key.toString()) / reg;
         return pij;
+    }
+
+    public Set<String> getStringSet() {
+        return stringSet;
+    }
+
+    public String getString() {
+        return string;
     }
 }

@@ -1,26 +1,8 @@
-package cn.edu.scu.jiangpeyton;
+package cn.edu.scu.jiangpeyton.rule;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Rule {
+public class Rule implements Cloneable {
     public List<API> profiles = new ArrayList<>();
-
-    class API {
-        public String name;
-        public String Provider;
-        public String Class;
-        public String method;
-        public List<String> hash = new ArrayList<>();
-        public Key key;
-
-        class Key {
-            public boolean diff;
-
-            class KeyStruct{
-                
-            }
-        }
-
-    }
 }

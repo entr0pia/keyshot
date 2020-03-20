@@ -1,26 +1,32 @@
 package cn.edu.scu.jiangpeyton.caclhash;
 
-import cn.edu.scu.jiangpeyton.graph.MethodsLocal;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 
 public class ClassHash {
-    public Map<SootMethod, MethodsLocal> calleeMap;
-    public SootClass sootClass;
-    public StringBuffer localHashBuff = new StringBuffer();
+    private SootClass localClass;
+    private StringBuffer localHashBuff = new StringBuffer();
 
-    public ClassHash(SootClass sootClass, Map<SootMethod, MethodsLocal> calleeMap) {
-        this.calleeMap = calleeMap;
-        this.sootClass = sootClass;
+    public ClassHash(SootClass sootClass) {
+        if (!sootClass.isApplicationClass()) {
+            localHashBuff.append(sootClass.getName());
+            return;
+        }
+        this.localClass = sootClass;
+        int layer = StringUtils.countMatches(sootClass.getName(), '.');
+        //this.localHashBuff.append(layer);
 
         for (SootField field : sootClass.getFields()) {
             SootClass declaringClass = field.getDeclaringClass();
+            while (declaringClass.hasSuperclass()) {
+                declaringClass = declaringClass.getSuperclass();
+            }
 
             // 若已处理该Class
             if (ClassHashMap.classHashMapRe.containsKey(declaringClass)) {
@@ -30,7 +36,7 @@ public class ClassHash {
 
             if (declaringClass.isApplicationClass()) {
                 // 若非系统Class
-                ClassHash fClassHash = new ClassHash(declaringClass.hasSuperclass() ? declaringClass.getSuperclass() : declaringClass, this.calleeMap);
+                ClassHash fClassHash = new ClassHash(declaringClass);
                 localHashBuff.append(fClassHash.getHash());
                 ClassHashMap.addClassMap(declaringClass, fClassHash.getHash());
             } else {
@@ -40,16 +46,16 @@ public class ClassHash {
             }
         }
 
-        for (SootMethod method : this.sootClass.getMethods()) {
+        for (SootMethod method : this.localClass.getMethods()) {
 
             // 若已处理该method
             if (ClassHashMap.methodHashMapRe.containsKey(method)) {
                 localHashBuff.append(ClassHashMap.methodHashMapRe.get(method));
                 continue;
             }
-            MethodHash methodHash = new MethodHash(method, this.calleeMap);
+            MethodHash methodHash = new MethodHash(method);
             localHashBuff.append(methodHash.getHash());
-            ClassHashMap.addMethodMap(method,methodHash.getHash());
+            ClassHashMap.addMethodMap(method, methodHash.getHash());
         }
     }
 

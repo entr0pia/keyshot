@@ -1,29 +1,32 @@
 package cn.edu.scu.jiangpeyton;
 
+import cn.edu.scu.jiangpeyton.rule.Rule;
 import com.beust.jcommander.Parameter;
 
 public class Params {
     @Parameter(names = "-a", required = true)
-    public String ANDROID_JAR;
+    public static String ANDROID_JAR;
 
     @Parameter(names = "-i")
-    public String PATH_TO_APK;
+    public static String PATH_TO_APK;
 
     @Parameter(names = "-j")
-    public String PATH_TO_RULE;
+    public static String PATH_TO_RULE;
 
     @Parameter(names = "-d")
-    public String PATH_TO_SDK;
+    public static String PATH_TO_SDK;
 
     @Parameter(names = "-r")
-    public boolean RECURSIVE = false;
+    public static boolean RECURSIVE = false; // PATH_TO_APK是否为目录
 
-    @Parameter(names = "-s")
-    public boolean SAVE_DATA = false;
+    @Parameter(names = "-u")
+    public static boolean UPDATE_DATA = false; // 更新规则文件
 
     @Parameter(names = "-l")
-    public boolean LOG = false;
+    public static boolean LOG = false;
 
     @Parameter(names = {"-h", "--help"})
-    public boolean HELP = false;
+    public static boolean HELP = false;
+
+    public static Rule RULE;
 }

@@ -19,13 +19,15 @@
           "pattern": "[a-zA-Z0-9]{24}",
           "len": 24,
           "entropy": 40.0,
-          "MLE": 3.0
+          "MLE": 3.0,
+          "base64":false
         },
         "secretKey": {
           "pattern": "[a-zA-Z0-9]{30}",
           "len": 30,
           "entropy": 50.0,
-          "MLE": 3.0
+          "MLE": 3.0,
+          "base64":false
         }
       }
     }

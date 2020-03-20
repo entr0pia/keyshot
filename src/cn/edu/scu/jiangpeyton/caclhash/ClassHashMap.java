@@ -1,8 +1,6 @@
 package cn.edu.scu.jiangpeyton.caclhash;
 
-import cn.edu.scu.jiangpeyton.graph.MethodsLocal;
 import org.apache.commons.codec.binary.Hex;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 
@@ -21,25 +19,6 @@ public class ClassHashMap {
     public static Map<SootClass, String> classHashMapRe = new HashMap<SootClass, String>();
     public static Map<String, SootMethod> methodHashMap = new HashMap<String, SootMethod>();
     public static Map<SootMethod, String> methodHashMapRe = new HashMap<SootMethod, String>();
-
-    public static Map<String, SootClass> getHashMap(Map<SootMethod, MethodsLocal> calleeMap) {
-        for (SootClass sootClass : Scene.v().getClasses()) {
-
-            // 若已处理该Class
-            if (classHashMapRe.containsValue(sootClass)) {
-                continue;
-            }
-
-            if (sootClass.isApplicationClass()) {
-                // 若为非系统Class
-                ClassHash classHash = new ClassHash(sootClass, calleeMap);
-                addClassMap(sootClass, classHash.getHash());
-            } else {
-                addClassMap(sootClass, SHA256(sootClass.getName()));
-            }
-        }
-        return classHashMap;
-    }
 
     public static void addClassMap(SootClass sootClass, String hash) {
         classHashMap.put(hash, sootClass);

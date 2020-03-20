@@ -10,14 +10,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MethodsLocal {
+public class MethodLocal {
     public List<Type> parameterTypes; //形参类型
     public List<Type> localVarTypes; //局部变量类型
     public List<SootMethod> callees; //本地调用函数
     public Type returnType; //返回类型
     public Set<String> localStr; //局部变量中的字符串
 
-    public MethodsLocal(SootMethod method) {
+    public MethodLocal(SootMethod method) {
         parameterTypes = method.getParameterTypes();
         returnType = method.getReturnType();
         callees = new ArrayList<>();
@@ -56,23 +56,10 @@ public class MethodsLocal {
         callees.add(method);
     }
 
-    public void findLocalVar(JAssignStmt stmt) throws ClassCastException{
+    public void findLocalVar(JAssignStmt stmt) throws ClassCastException {
         /**
          * 提取局部变量类型及其中的字符串常量
          */
-        /*
-        Value value = stmt.getRightOp();
-        if (StringConstant.class.equals(value.getClass())) {
-            localStr.add(((StringConstant) value).value);
-            localVarType.add(value.getType());
-        } else if (IntConstant.class.equals(value.getClass())
-                || LongConstant.class.equals(value.getClass())
-                || DoubleConstant.class.equals(value.getClass())
-                || FloatConstant.class.equals(value.getClass())
-                || ClassConstant.class.equals(value.getClass())) {
-            localVarType.add(value.getType());
-        }
-        */
         Value left = stmt.getLeftOp();
         Value right = stmt.getRightOp();
         // 获取左值类型
@@ -89,13 +76,13 @@ public class MethodsLocal {
             }
         }
         // 若右值为Invoke指令, 加入callees列表
-        if(JVirtualInvokeExpr.class.equals(right.getClass())){
-            JVirtualInvokeExpr virtualInvoke=(JVirtualInvokeExpr)right;
-            NumberedString sig=virtualInvoke.getMethodRef().getSubSignature();
+        if (JVirtualInvokeExpr.class.equals(right.getClass())) {
+            JVirtualInvokeExpr virtualInvoke = (JVirtualInvokeExpr) right;
+            NumberedString sig = virtualInvoke.getMethodRef().getSubSignature();
             callees.add(virtualInvoke.getMethodRef().getDeclaringClass().getMethod(sig));
             // 对于右值调用方法的参数, 提取其类型及字符常量
-            for(Value arg:virtualInvoke.getArgs()){
-                if(StringConstant.class.equals(arg.getClass())){
+            for (Value arg : virtualInvoke.getArgs()) {
+                if (StringConstant.class.equals(arg.getClass())) {
                     localStr.add(((StringConstant) arg).value);
                     //localVarTypes.add(arg.getType());
                 }
