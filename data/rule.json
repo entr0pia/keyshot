@@ -1,29 +1,33 @@
 {
-    "profiles":[
-        {
-            "API":"OSS",
-            "Provider":"alibaba",
-            "Class":"com.alibaba.sdk.android.oss.OSSClient",
-            "method":"void <init>(android.content.Context,java.lang.String,com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider)",
-            "hash":[
-                "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-            ],
-            "Key":{
-                "diff":false,
-                "Root":{
-                    "AccessID":{
-                        "pattern":"[a-zA-Z0-9]{24}",
-                        "entropy":40,
-                        "MLE":3
-                    },
-                    "SecretKey":{
-                        "pattern":"[a-zA-Z0-9]{30}",
-                        "entropy":50,
-                        "MLE":3
-                    }
-                },
-                "User":{}
-            }
+  "profiles": [
+    {
+      "name": "OSS",
+      "provider": "alibaba",
+      "packageName": "com.alibaba.sdk.android.oss",
+      "obfs": false,
+      "apiClass": "com.alibaba.sdk.android.oss.internal.InternalRequestOperation",
+      "apiMethod": "void <init>(android.content.Context,java.net.URI,com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider,com.alibaba.sdk.android.oss.ClientConfiguration)",
+      "hash": [
+        "ecf926660c64b73931063ed2f93ee3dcd64a65a1f2fae3acd73c3ca7080c3903",
+        "21ae32f44efbfff9f24e39975630ae65e7a4573aedddb00200fcc16efbcc0e1e",
+        "d620f973e8d5166e16b7e51f0c5347720319b2cbd826715a188571d094ff53d7",
+        "0f7da54be5c9c8186f7b28d0f924b03afae36f153d9501c390b3a41802477cb1"
+      ],
+      "key": {
+        "diff": false,
+        "accessID": {
+          "pattern": "[a-zA-Z0-9]{24}",
+          "len": 24,
+          "entropy": 40.0,
+          "MLE": 3.0
+        },
+        "secretKey": {
+          "pattern": "[a-zA-Z0-9]{30}",
+          "len": 30,
+          "entropy": 50.0,
+          "MLE": 3.0
         }
-    ]
+      }
+    }
+  ]
 }

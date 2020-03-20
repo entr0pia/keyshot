@@ -1,0 +1,30 @@
+{
+    "profiles": [
+        {
+            "name": "OSS",
+            "provider": "alibaba",
+            "packageName":"com.alibaba.sdk.android.oss",
+            "obfs":false,
+            "apiClass": "com.alibaba.sdk.android.oss.internal.InternalRequestOperation",
+            "apiMethod": "void <init>(android.content.Context,java.net.URI,com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider,com.alibaba.sdk.android.oss.ClientConfiguration)",
+            "hash": [
+                "ecf926660c64b73931063ed2f93ee3dcd64a65a1f2fae3acd73c3ca7080c3903"
+            ],
+            "key": {
+                "diff": false,
+                "accessID": {
+                    "pattern": "[a-zA-Z0-9]{24}",
+                    "len":24,
+                    "entropy": 40.0,
+                    "MLE": 3.0
+                },
+                "secretKey": {
+                    "pattern": "[a-zA-Z0-9]{30}",
+                    "len":30,
+                    "entropy": 50.0,
+                    "MLE": 3.0
+                }
+            }
+        }
+    ]
+}
