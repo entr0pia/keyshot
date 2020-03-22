@@ -3,7 +3,6 @@ package cn.edu.scu.jiangpeyton.filter;
 import soot.util.ArraySet;
 
 import java.util.Set;
-import java.util.regex.Matcher;
 
 public class Markov {
     /**
@@ -32,7 +31,7 @@ public class Markov {
 
 
     public static double llEstimation(String s) {
-        String sub = s.replaceAll("[0-9]", "").toLowerCase();
+        String sub = s.replaceAll("[0-9+/_=\\-]", "").toLowerCase();
         double P = 0.0;
         char last = '\0';
         double pij;
@@ -52,13 +51,9 @@ public class Markov {
         double pij;
         double reg = 0.0;
         for (int j = 97; j <= 122; j++) {
-            StringBuffer tmp = new StringBuffer();
-            tmp.append(last).append((char) j);
-            reg += Priori.firstOrderP.get(tmp.toString());
+            reg += Priori.firstOrderP.get(String.valueOf(last) + (char) j);
         }
-        StringBuffer key = new StringBuffer();
-        key.append(last).append(c);
-        pij = Priori.firstOrderP.get(key.toString()) / reg;
+        pij = Priori.firstOrderP.get(String.valueOf(last) + c) / reg;
         return pij;
     }
 

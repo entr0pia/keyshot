@@ -19,7 +19,7 @@ public class MethodHash {
     private MethodLocal methodLocalCallee;
     private StringBuilder localHashBuffer = new StringBuilder();
 
-    public MethodHash(SootMethod method) {
+    public MethodHash(SootMethod method) throws StackOverflowError {
         if (!method.getDeclaringClass().isApplicationClass()) {
             localHashBuffer.append(method.getSignature());
             return;

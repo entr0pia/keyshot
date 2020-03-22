@@ -13,7 +13,7 @@ public class ClassHash {
     private SootClass localClass;
     private StringBuffer localHashBuff = new StringBuffer();
 
-    public ClassHash(SootClass sootClass) {
+    public ClassHash(SootClass sootClass) throws StackOverflowError {
         if (!sootClass.isApplicationClass()) {
             localHashBuff.append(sootClass.getName());
             return;

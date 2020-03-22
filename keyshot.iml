@@ -16,5 +16,7 @@
     <orderEntry type="library" name="com.google.guava:guava:23.0" level="project" />
     <orderEntry type="library" name="com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" name="net.dongliu:apk-parser:2.6.10" level="project" />
+    <orderEntry type="library" name="com.aliyun.oss:aliyun-sdk-oss:3.8.1" level="project" />
+    <orderEntry type="library" name="jakarta.xml.bind:jakarta.xml.bind-api:2.3.2" level="project" />
   </component>
 </module>

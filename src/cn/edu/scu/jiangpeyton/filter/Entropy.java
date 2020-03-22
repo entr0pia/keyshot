@@ -42,7 +42,6 @@ public class Entropy {
         return s;
     }
 
-    ;
 
     public Set<String> getStringSet() {
         return stringSet;
