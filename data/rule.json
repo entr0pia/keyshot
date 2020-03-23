@@ -6,6 +6,7 @@
       "packageName": "com.alibaba.sdk.android.oss",
       "obfs": false,
       "apiClass": "com.alibaba.sdk.android.oss.internal.InternalRequestOperation",
+      "methodNeeded": true,
       "apiMethod": "void <init>(android.content.Context,java.net.URI,com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider,com.alibaba.sdk.android.oss.ClientConfiguration)",
       "hash": [
         "ecf926660c64b73931063ed2f93ee3dcd64a65a1f2fae3acd73c3ca7080c3903",
@@ -14,20 +15,47 @@
         "0f7da54be5c9c8186f7b28d0f924b03afae36f153d9501c390b3a41802477cb1"
       ],
       "key": {
-        "diff": false,
         "accessID": {
-          "pattern": "[a-zA-Z0-9]{24}",
+          "pattern": "LTAI4F[a-zA-Z0-9]{18}",
           "len": 24,
           "entropy": 40.0,
           "MLE": 3.0,
-          "base64":false
+          "base64": false
         },
         "secretKey": {
           "pattern": "[a-zA-Z0-9]{30}",
           "len": 30,
           "entropy": 50.0,
           "MLE": 3.0,
+          "base64": false
+        }
+      }
+    },
+    {
+      "name": "BOS",
+      "provider": "baidu",
+      "packageName": "com.baidubce.services.bos",
+      "obfs": true,
+      "apiClass": "com.baidubce.AbstractBceClient",
+      "methodNeeded": false,
+      "apiMethod":"",
+      "hash": [
+        "097d33103c9b9b429c48edb7a54b119bc791bf7315fd8e28941044eea745970f"
+      ],
+      "key": {
+        "accessID": {
+          "pattern":"[a-f0-9]{32}",
+          "len":32,
+          "entropy":50.0,
+          "MLE":3.0,
           "base64":false
+        },
+        "secretKey":{
+          "pattern":"[a-f0-9]{32}",
+          "len":32,
+          "entropy":50.0,
+          "MLE":3.0,
+          "base64":false 
         }
       }
     }

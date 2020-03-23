@@ -1,15 +1,12 @@
 package cn.edu.scu.jiangpeyton;
 
 public class Text {
-    static private String usage = new StringBuilder()
+    public static String usage = new StringBuilder()
             .append("Usage:\n")
-            .append("java -jar keyshot.jar -a android.jar [-options]\n")
-            .append("Options:\n").append("   -i path to apk\n")
+            .append("java -jar keyshot.jar -a path_to_android.jar -i path_to_apk -j path_to_rules [-options]\n")
+            .append("Options:\n")
             .append("   -r recursive path to apk\n")
-            .append("   -j path to rules.json\n")
-            .append("   -s save train result\n")
-            .append("   -l save log file\n")
-            .append("   -d path to sdk")
+            .append("   -u update ruless.json\n")
             .toString();
 
     static public String getUsage() {

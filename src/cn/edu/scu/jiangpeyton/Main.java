@@ -4,10 +4,11 @@ package cn.edu.scu.jiangpeyton;
 import cn.edu.scu.jiangpeyton.caclhash.ClassHash;
 import cn.edu.scu.jiangpeyton.caclhash.ClassHashMap;
 import cn.edu.scu.jiangpeyton.filter.FilterKey;
-import cn.edu.scu.jiangpeyton.filter.Markov;
 import cn.edu.scu.jiangpeyton.graph.CalleeGraph;
 import cn.edu.scu.jiangpeyton.requests.APIRequest;
 import cn.edu.scu.jiangpeyton.requests.AliOSS;
+import cn.edu.scu.jiangpeyton.requests.BaiduBOS;
+import cn.edu.scu.jiangpeyton.requests.KingKS3;
 import cn.edu.scu.jiangpeyton.rule.API;
 import cn.edu.scu.jiangpeyton.rule.Rule;
 import com.beust.jcommander.JCommander;
@@ -16,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import net.dongliu.apk.parser.ApkFile;
+import polyglot.ext.param.types.Param;
 import soot.PackManager;
 import soot.Scene;
 import soot.SootClass;
@@ -24,12 +26,12 @@ import soot.options.Options;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import java.util.zip.ZipException;
 
 public class Main {
 
@@ -53,7 +55,6 @@ public class Main {
                 .append(".txt");
         logFile = logFileName.toString();
 
-
         //解析命令行参数
         Params params = new Params();
         try {
@@ -68,6 +69,14 @@ public class Main {
             System.out.print(Text.getUsage());
             return;
         }
+
+        /*APIRequest apiRequest=new BaiduBOS();
+        try {
+            apiRequest.clientBuilder();
+            System.out.println(apiRequest.shot());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
 
 
         // 读取规则文件
@@ -108,6 +117,8 @@ public class Main {
 
         try (ApkFile apkFile = new ApkFile(new File(path_to_apk))) {
             packageName = apkFile.getApkMeta().getPackageName();
+        } catch (ZipException e){
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -132,6 +143,18 @@ public class Main {
         // 绘制调用关系图
         CalleeGraph calleeGraph = new CalleeGraph();
 
+        if(Params.DEBUG) {
+            for (SootClass sootClass : Scene.v().getClasses()) {
+                if (sootClass.getName().contains("com.baidubce.AbstractBceClient")) {
+                    ClassHash hash = new ClassHash(sootClass);
+                    System.out.println(sootClass.getName() + ": " + hash.getHash());
+                /*for (SootMethod sootMethod:sootClass.getMethods()){
+                    System.out.println(sootMethod.getSubSignature() + ": " + ClassHashMap.methodHashMapRe.get(sootMethod));
+                }*/
+                    return;
+                }
+            }
+        }
         // 更新规则文件
         if (Params.UPDATE_DATA) {
             for (SootClass sootClass : Scene.v().getClasses()) {
@@ -185,7 +208,7 @@ public class Main {
                 if (i.getName().contains(profile.packageName)) {
                     StringBuilder msg = new StringBuilder();
                     msg.append("发现目标package >> ").append(profile.packageName);
-                    logging(packageName, msg.toString());
+                    logging(packageName, msg.toString(),LogCode.FOUNDAPI);
                     for (SootClass sootClass : calleeGraph.slicingStr.keySet()) {
                         Set<String> slicing = calleeGraph.slicingStr.get(sootClass);
                         FilterKey filter = new FilterKey(slicing, profile.key);
@@ -203,14 +226,29 @@ public class Main {
                 // 若目标sdk支持混淆, 则通过哈希值识别
                 logging(packageName, "未检测到目标sdk, 尝试哈希匹配");
                 for (String hash : profile.hash) {
-                    if (ClassHashMap.methodHashMap.containsKey(hash)) {
+                    StringBuilder msg = new StringBuilder();
+                    if (profile.methodNeeded && ClassHashMap.methodHashMap.containsKey(hash)) {
                         // 发现目标method, 提取密钥
-                        StringBuilder msg = new StringBuilder();
                         msg.append("发现目标method >> ")
                                 .append(profile.apiClass)
                                 .append(':')
                                 .append(profile.apiMethod);
-                        logging(packageName, msg.toString());
+                        logging(packageName, msg.toString(),LogCode.FOUNDAPI);
+                        for (SootClass sootClass : calleeGraph.slicingStr.keySet()) {
+                            Set<String> slicing = calleeGraph.slicingStr.get(sootClass);
+                            FilterKey filter = new FilterKey(slicing, profile.key);
+                            if (filter.isPaired()) {
+                                // 发现成对密钥, 进行零泄漏检测
+                                logging(packageName, "发现成对密钥, 进行零泄漏检测");
+                                request(filter, profile);
+                            }
+                        }
+                        break;
+                    }
+                    if(!profile.methodNeeded && ClassHashMap.classHashMap.containsKey(hash)){
+                        msg.append("发现目标class >> ")
+                                .append(profile.apiClass);
+                        logging(packageName, msg.toString(),LogCode.FOUNDAPI);
                         for (SootClass sootClass : calleeGraph.slicingStr.keySet()) {
                             Set<String> slicing = calleeGraph.slicingStr.get(sootClass);
                             FilterKey filter = new FilterKey(slicing, profile.key);
@@ -229,14 +267,16 @@ public class Main {
 
     public static void lsFile(File file) {
         // 遍历目录
-        for (File sub : Objects.requireNonNull(file.listFiles())) {
-            if (sub.isDirectory()) {
-                lsFile(sub);
-            } else {
-                try {
-                    factory(sub.getAbsolutePath());
-                } catch (Exception e) {
-                    //e.printStackTrace();
+        if(file.isDirectory()) {
+            for (File sub : Objects.requireNonNull(file.listFiles())) {
+                if (sub.isDirectory()) {
+                    lsFile(sub);
+                } else {
+                    try {
+                        factory(sub.getAbsolutePath());
+                    } catch (Exception e) {
+                        //e.printStackTrace();
+                    }
                 }
             }
         }
@@ -247,13 +287,18 @@ public class Main {
         APIRequest apiRequest;
         if (profile.packageName.equals("com.alibaba.sdk.android.oss")) {
             apiRequest = new AliOSS();
-        } else {
+        } else if(profile.packageName.equals("com.baidubce.services.bos")){
+            apiRequest=new BaiduBOS();
+        }
+        else {
             return;
         }
         for (String accessID : filter.getAccessID()) {
-            //System.out.println(accessID);
             for (String secretKey : filter.getSecretKey()) {
-                //System.out.println(secretKey);
+                if(accessID.equals(secretKey)){
+                    continue;
+                }
+                //System.out.println(accessID+", "+secretKey);
                 try {
                     apiRequest.setAccessKeyId(accessID);
                     apiRequest.setAccessKeySecret(secretKey);
@@ -264,9 +309,9 @@ public class Main {
                             .append(", ")
                             .append(secretKey)
                             .append(')');
-                    logging(packageName, builder.toString());
+                    logging(packageName, builder.toString(),LogCode.FOUNDKEY);
                     if (apiRequest.shot()) {
-                        logging(packageName, "密钥使用错误, 权限过高");
+                        logging(packageName, "密钥使用错误, 权限过高", LogCode.KEYERROR);
                     } else {
                         logging(packageName, "密钥使用正确");
                     }
@@ -277,12 +322,18 @@ public class Main {
         }
     }
 
-    public static void logging(String packageName, String msg) {
+    public static void logging(String packageName, String msg){
+        logging(packageName,msg, LogCode.NORMAL);
+    }
+
+    public static void logging(String packageName, String msg,int code) {
         // 写日志文件
         try {
             OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(new File(logFile), true), StandardCharsets.UTF_8);
             StringBuilder builder = new StringBuilder();
             builder.append(LocalTime.now().toString(), 0, 8)
+                    .append(" >>")
+                    .append(code)
                     .append(" [")
                     .append(packageName)
                     .append("] ")

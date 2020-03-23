@@ -6,6 +6,7 @@ import cn.edu.scu.jiangpeyton.rule.KeyStruct;
 import soot.SootClass;
 import soot.util.ArraySet;
 
+import java.util.Base64;
 import java.util.Set;
 
 public class FilterKey {
@@ -29,12 +30,20 @@ public class FilterKey {
         Set<String> stringSet = new ArraySet<>();
         stringSet.addAll(input);
 
-        // 根据长度进行过滤
+        // 根据base64(可选)和长度进行过滤
         for (String s : input) {
             if (s.length() != keyStruct.len) {
                 stringSet.remove(s);
+            }else if(keyStruct.base64){
+                try {
+                    Base64.getDecoder().decode(s);
+                    stringSet.remove(s);
+                }catch (IllegalArgumentException e){
+                    continue;
+                }
             }
         }
+
         // 正则过滤器
         stringSet = new Regular(stringSet, keyStruct.pattern).getStringSet();
         if (stringSet.size() <= 1) {
