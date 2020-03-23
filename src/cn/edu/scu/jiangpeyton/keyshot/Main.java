@@ -1,15 +1,15 @@
-package cn.edu.scu.jiangpeyton;
+package cn.edu.scu.jiangpeyton.keyshot;
 
 
-import cn.edu.scu.jiangpeyton.caclhash.ClassHash;
-import cn.edu.scu.jiangpeyton.caclhash.ClassHashMap;
-import cn.edu.scu.jiangpeyton.filter.FilterKey;
-import cn.edu.scu.jiangpeyton.graph.CalleeGraph;
-import cn.edu.scu.jiangpeyton.requests.APIRequest;
-import cn.edu.scu.jiangpeyton.requests.AliOSS;
-import cn.edu.scu.jiangpeyton.requests.BaiduBOS;
-import cn.edu.scu.jiangpeyton.rule.API;
-import cn.edu.scu.jiangpeyton.rule.Rule;
+import cn.edu.scu.jiangpeyton.keyshot.caclhash.ClassHash;
+import cn.edu.scu.jiangpeyton.keyshot.caclhash.ClassHashMap;
+import cn.edu.scu.jiangpeyton.keyshot.filter.FilterKey;
+import cn.edu.scu.jiangpeyton.keyshot.graph.CalleeGraph;
+import cn.edu.scu.jiangpeyton.keyshot.requests.APIRequest;
+import cn.edu.scu.jiangpeyton.keyshot.requests.AliOSS;
+import cn.edu.scu.jiangpeyton.keyshot.requests.BaiduBOS;
+import cn.edu.scu.jiangpeyton.keyshot.rule.API;
+import cn.edu.scu.jiangpeyton.keyshot.rule.Rule;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.google.gson.Gson;
@@ -307,14 +307,14 @@ public class Main {
                             .append(", ")
                             .append(secretKey)
                             .append(')');
-                    logging(packageName, builder.toString(),LogCode.FOUNDKEY);
                     if (apiRequest.shot()) {
+                        logging(packageName, builder.toString(),LogCode.FOUNDKEY);
                         logging(packageName, "密钥使用错误, 权限过高", LogCode.KEYERROR);
                     } else {
                         logging(packageName, "密钥使用正确");
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
             }
         }

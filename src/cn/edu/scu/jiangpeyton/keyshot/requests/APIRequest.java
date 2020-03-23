@@ -1,4 +1,4 @@
-package cn.edu.scu.jiangpeyton.requests;
+package cn.edu.scu.jiangpeyton.keyshot.requests;
 
 public class APIRequest {
     private String accessKeyId;
@@ -8,7 +8,7 @@ public class APIRequest {
         return new Object();
     }
 
-    public boolean shot() {
+    public Boolean shot() {
         return false;
     }
 
@@ -19,4 +19,10 @@ public class APIRequest {
     public void setAccessKeySecret(String s) {
         this.accessKeySecret = s;
     }
+
+    public void setKey(String accessKeyId, String accessKeySecret) {
+        this.accessKeyId = accessKeyId;
+        this.accessKeySecret = accessKeySecret;
+    }
+
 }

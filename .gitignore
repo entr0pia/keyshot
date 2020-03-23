@@ -1,4 +1,4 @@
 .idea
 out
-examples/android_jar
+examples/*
 log

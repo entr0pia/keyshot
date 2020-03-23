@@ -1,4 +1,4 @@
-package cn.edu.scu.jiangpeyton.graph;
+package cn.edu.scu.jiangpeyton.keyshot.graph;
 
 import soot.Scene;
 import soot.SootClass;

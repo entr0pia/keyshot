@@ -1,9 +1,7 @@
-package cn.edu.scu.jiangpeyton.filter;
+package cn.edu.scu.jiangpeyton.keyshot.filter;
 
-import cn.edu.scu.jiangpeyton.graph.CalleeGraph;
-import cn.edu.scu.jiangpeyton.rule.Key;
-import cn.edu.scu.jiangpeyton.rule.KeyStruct;
-import soot.SootClass;
+import cn.edu.scu.jiangpeyton.keyshot.rule.Key;
+import cn.edu.scu.jiangpeyton.keyshot.rule.KeyStruct;
 import soot.util.ArraySet;
 
 import java.util.Base64;

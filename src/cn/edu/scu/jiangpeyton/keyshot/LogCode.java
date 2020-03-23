@@ -1,4 +1,4 @@
-package cn.edu.scu.jiangpeyton;
+package cn.edu.scu.jiangpeyton.keyshot;
 
 public class LogCode {
     public static int NORMAL = 4000;

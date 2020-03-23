@@ -1,6 +1,6 @@
-package cn.edu.scu.jiangpeyton;
+package cn.edu.scu.jiangpeyton.keyshot;
 
-import cn.edu.scu.jiangpeyton.rule.Rule;
+import cn.edu.scu.jiangpeyton.keyshot.rule.Rule;
 import com.beust.jcommander.Parameter;
 
 public class Params {

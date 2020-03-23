@@ -1,5 +1,6 @@
-package cn.edu.scu.jiangpeyton.requests;
+package cn.edu.scu.jiangpeyton.keyshot.requests;
 
+import com.baidubce.BceServiceException;
 import com.baidubce.auth.DefaultBceCredentials;
 import com.baidubce.services.bos.BosClient;
 import com.baidubce.services.bos.BosClientConfiguration;
@@ -29,6 +30,7 @@ public class BaiduBOS extends APIRequest {
         this.client = clientBuilder();
     }
 
+    @Override
     public BosClient clientBuilder() throws Exception {
         BosClientConfiguration config = new BosClientConfiguration();
         config.setCredentials(new DefaultBceCredentials(this.accessKeyId, this.accessKeySecret));
@@ -38,23 +40,38 @@ public class BaiduBOS extends APIRequest {
         return bosClient;
     }
 
+    @Override
     public void setAccessKeyId(String s) {
         this.accessKeyId = s;
     }
 
+    @Override
     public void setAccessKeySecret(String s) {
         this.accessKeySecret = s;
     }
 
-    public boolean shot() {
+    @Override
+    public void setKey(String accessKeyId, String accessKeySecret) {
+        this.accessKeyId = accessKeyId;
+        this.accessKeySecret = accessKeySecret;
+    }
+
+    @Override
+    public Boolean shot() {
         try {
             client.listBuckets();
             // 当密钥权限过高时, 返回true
             return true;
+        } catch (BceServiceException e) {
+            if (e.getErrorCode().equals("AccessDenied")) {
+                return false;
+            }
+            return null;
         } catch (Exception e) {
             //e.printStackTrace();
-            return false;
+            return null;
         }
     }
+
 
 }

@@ -1,4 +1,4 @@
-package cn.edu.scu.jiangpeyton.rule;
+package cn.edu.scu.jiangpeyton.keyshot.rule;
 
 public class KeyStruct {
     public String pattern;

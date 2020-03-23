@@ -1,4 +1,4 @@
-package cn.edu.scu.jiangpeyton.caclhash;
+package cn.edu.scu.jiangpeyton.keyshot.caclhash;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;

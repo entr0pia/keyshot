@@ -1,4 +1,4 @@
-package cn.edu.scu.jiangpeyton;
+package cn.edu.scu.jiangpeyton.keyshot;
 
 public class Text {
     public static String usage = new StringBuilder()
