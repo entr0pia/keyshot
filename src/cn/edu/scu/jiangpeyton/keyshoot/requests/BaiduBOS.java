@@ -1,4 +1,4 @@
-package cn.edu.scu.jiangpeyton.keyshot.requests;
+package cn.edu.scu.jiangpeyton.keyshoot.requests;
 
 import com.baidubce.BceServiceException;
 import com.baidubce.auth.DefaultBceCredentials;
@@ -57,7 +57,7 @@ public class BaiduBOS extends APIRequest {
     }
 
     @Override
-    public Boolean shot() {
+    public Boolean shoot() {
         try {
             client.listBuckets();
             // 当密钥权限过高时, 返回true

@@ -1,4 +1,4 @@
-package cn.edu.scu.jiangpeyton.keyshot.rule;
+package cn.edu.scu.jiangpeyton.keyshoot.rule;
 
 public class Key {
     public KeyStruct accessID;

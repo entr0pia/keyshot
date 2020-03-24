@@ -1,7 +1,7 @@
-package cn.edu.scu.jiangpeyton.keyshot.filter;
+package cn.edu.scu.jiangpeyton.keyshoot.filter;
 
-import cn.edu.scu.jiangpeyton.keyshot.rule.Key;
-import cn.edu.scu.jiangpeyton.keyshot.rule.KeyStruct;
+import cn.edu.scu.jiangpeyton.keyshoot.rule.Key;
+import cn.edu.scu.jiangpeyton.keyshoot.rule.KeyStruct;
 import soot.util.ArraySet;
 
 import java.util.Base64;
@@ -32,11 +32,11 @@ public class FilterKey {
         for (String s : input) {
             if (s.length() != keyStruct.len) {
                 stringSet.remove(s);
-            }else if(keyStruct.base64){
+            } else if (keyStruct.base64) {
                 try {
                     Base64.getDecoder().decode(s);
                     stringSet.remove(s);
-                }catch (IllegalArgumentException e){
+                } catch (IllegalArgumentException e) {
                     continue;
                 }
             }
@@ -44,13 +44,13 @@ public class FilterKey {
 
         // 正则过滤器
         stringSet = new Regular(stringSet, keyStruct.pattern).getStringSet();
-        if (stringSet.size() <= 1) {
+        if (stringSet.size() <= 2) {
             return stringSet;
         }
 
         // 熵过滤器
         stringSet = new Entropy(stringSet, keyStruct.entropy).getStringSet();
-        if (stringSet.size() <= 1) {
+        if (stringSet.size() <= 2) {
             return stringSet;
         }
 

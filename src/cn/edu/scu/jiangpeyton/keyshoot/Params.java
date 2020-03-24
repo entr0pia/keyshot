@@ -1,6 +1,6 @@
-package cn.edu.scu.jiangpeyton.keyshot;
+package cn.edu.scu.jiangpeyton.keyshoot;
 
-import cn.edu.scu.jiangpeyton.keyshot.rule.Rule;
+import cn.edu.scu.jiangpeyton.keyshoot.rule.Rule;
 import com.beust.jcommander.Parameter;
 
 public class Params {
@@ -23,7 +23,7 @@ public class Params {
     public static boolean HELP = false;
 
     @Parameter(names = "-d")
-    public static boolean DEBUG=false;
+    public static boolean DEBUG = false;
 
     public static Rule RULE;
 }

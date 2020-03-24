@@ -1,4 +1,4 @@
-package cn.edu.scu.jiangpeyton.keyshot.requests;
+package cn.edu.scu.jiangpeyton.keyshoot.requests;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
@@ -57,7 +57,7 @@ public class AliOSS extends APIRequest {
     }
 
     @Override
-    public Boolean shot() {
+    public Boolean shoot() {
         try {
             client.listBuckets();
             // 当密钥权限过高时, 返回true

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_keyshoot" default="compile.module.keyshoot">
+  <dirname property="module.keyshoot.basedir" file="${ant.file.module_keyshoot}"/>
+  
+  <property name="module.jdk.home.keyshoot" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.keyshoot" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.keyshoot" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.keyshoot" value="-encoding UTF-8 -source 11 -target 11 ${compiler.args}"/>
+  
+  <property name="keyshoot.output.dir" value="${module.keyshoot.basedir}/out/production/keyshoot"/>
+  <property name="keyshoot.testoutput.dir" value="${module.keyshoot.basedir}/out/test/keyshoot"/>
+  
+  <path id="keyshoot.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="keyshoot.module.production.classpath">
+    <path refid="${module.jdk.classpath.keyshoot}"/>
+    <path refid="library.de.tud.sse:soot-infoflow:2.7.1.classpath"/>
+    <path refid="library.soot-infoflow-android-classes.classpath"/>
+    <path refid="library.com.beust:jcommander:1.72.classpath"/>
+    <path refid="library.org.slf4j:slf4j-jdk14:1.7.12.classpath"/>
+    <path refid="library.commons-codec:commons-codec:1.14.classpath"/>
+    <path refid="library.org.apache.commons:commons-lang3:3.8.1.classpath"/>
+    <path refid="library.com.google.guava:guava:23.0.classpath"/>
+    <path refid="library.com.google.code.gson:gson:2.8.6.classpath"/>
+    <path refid="library.net.dongliu:apk-parser:2.6.10.classpath"/>
+    <path refid="library.com.aliyun.oss:aliyun-sdk-oss:3.8.1.classpath"/>
+    <path refid="library.jakarta.xml.bind:jakarta.xml.bind-api:2.3.2.classpath"/>
+    <path refid="library.com.baidubce:bce-java-sdk:0.10.36.classpath"/>
+    <path refid="library.com.qcloud:cos_api:5.6.18.classpath"/>
+  </path>
+  
+  <path id="keyshoot.runtime.production.module.classpath">
+    <pathelement location="${keyshoot.output.dir}"/>
+    <path refid="library.de.tud.sse:soot-infoflow:2.7.1.classpath"/>
+    <path refid="library.soot-infoflow-android-classes.classpath"/>
+    <path refid="library.com.beust:jcommander:1.72.classpath"/>
+    <path refid="library.org.slf4j:slf4j-jdk14:1.7.12.classpath"/>
+    <path refid="library.commons-codec:commons-codec:1.14.classpath"/>
+    <path refid="library.org.apache.commons:commons-lang3:3.8.1.classpath"/>
+    <path refid="library.com.google.guava:guava:23.0.classpath"/>
+    <path refid="library.com.google.code.gson:gson:2.8.6.classpath"/>
+    <path refid="library.net.dongliu:apk-parser:2.6.10.classpath"/>
+    <path refid="library.com.aliyun.oss:aliyun-sdk-oss:3.8.1.classpath"/>
+    <path refid="library.jakarta.xml.bind:jakarta.xml.bind-api:2.3.2.classpath"/>
+    <path refid="library.com.baidubce:bce-java-sdk:0.10.36.classpath"/>
+    <path refid="library.com.qcloud:cos_api:5.6.18.classpath"/>
+  </path>
+  
+  <path id="keyshoot.module.classpath">
+    <path refid="${module.jdk.classpath.keyshoot}"/>
+    <pathelement location="${keyshoot.output.dir}"/>
+    <path refid="library.de.tud.sse:soot-infoflow:2.7.1.classpath"/>
+    <path refid="library.soot-infoflow-android-classes.classpath"/>
+    <path refid="library.com.beust:jcommander:1.72.classpath"/>
+    <path refid="library.org.slf4j:slf4j-jdk14:1.7.12.classpath"/>
+    <path refid="library.commons-codec:commons-codec:1.14.classpath"/>
+    <path refid="library.org.apache.commons:commons-lang3:3.8.1.classpath"/>
+    <path refid="library.com.google.guava:guava:23.0.classpath"/>
+    <path refid="library.com.google.code.gson:gson:2.8.6.classpath"/>
+    <path refid="library.net.dongliu:apk-parser:2.6.10.classpath"/>
+    <path refid="library.com.aliyun.oss:aliyun-sdk-oss:3.8.1.classpath"/>
+    <path refid="library.jakarta.xml.bind:jakarta.xml.bind-api:2.3.2.classpath"/>
+    <path refid="library.com.baidubce:bce-java-sdk:0.10.36.classpath"/>
+    <path refid="library.com.qcloud:cos_api:5.6.18.classpath"/>
+  </path>
+  
+  <path id="keyshoot.runtime.module.classpath">
+    <pathelement location="${keyshoot.testoutput.dir}"/>
+    <pathelement location="${keyshoot.output.dir}"/>
+    <path refid="library.de.tud.sse:soot-infoflow:2.7.1.classpath"/>
+    <path refid="library.soot-infoflow-android-classes.classpath"/>
+    <path refid="library.com.beust:jcommander:1.72.classpath"/>
+    <path refid="library.org.slf4j:slf4j-jdk14:1.7.12.classpath"/>
+    <path refid="library.commons-codec:commons-codec:1.14.classpath"/>
+    <path refid="library.org.apache.commons:commons-lang3:3.8.1.classpath"/>
+    <path refid="library.com.google.guava:guava:23.0.classpath"/>
+    <path refid="library.com.google.code.gson:gson:2.8.6.classpath"/>
+    <path refid="library.net.dongliu:apk-parser:2.6.10.classpath"/>
+    <path refid="library.com.aliyun.oss:aliyun-sdk-oss:3.8.1.classpath"/>
+    <path refid="library.jakarta.xml.bind:jakarta.xml.bind-api:2.3.2.classpath"/>
+    <path refid="library.com.baidubce:bce-java-sdk:0.10.36.classpath"/>
+    <path refid="library.com.qcloud:cos_api:5.6.18.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.keyshoot">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.keyshoot">
+    <patternset refid="excluded.from.module.keyshoot"/>
+  </patternset>
+  
+  <path id="keyshoot.module.sourcepath">
+    <dirset dir="${module.keyshoot.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.keyshoot" depends="compile.module.keyshoot.production,compile.module.keyshoot.tests" description="Compile module keyshoot"/>
+  
+  <target name="compile.module.keyshoot.production" depends="register.custom.compilers" description="Compile module keyshoot; production classes">
+    <mkdir dir="${keyshoot.output.dir}"/>
+    <javac2 destdir="${keyshoot.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.keyshoot}/javac">
+      <compilerarg line="${compiler.args.keyshoot}"/>
+      <bootclasspath refid="keyshoot.module.bootclasspath"/>
+      <classpath refid="keyshoot.module.production.classpath"/>
+      <src refid="keyshoot.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.keyshoot"/>
+    </javac2>
+    
+    <copy todir="${keyshoot.output.dir}">
+      <fileset dir="${module.keyshoot.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.keyshoot.tests" depends="register.custom.compilers,compile.module.keyshoot.production" description="compile module keyshoot; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.keyshoot" description="cleanup module">
+    <delete dir="${keyshoot.output.dir}"/>
+    <delete dir="${keyshoot.testoutput.dir}"/>
+  </target>
+</project>

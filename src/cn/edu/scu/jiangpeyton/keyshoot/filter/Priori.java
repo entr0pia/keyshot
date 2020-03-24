@@ -1,4 +1,4 @@
-package cn.edu.scu.jiangpeyton.keyshot.filter;
+package cn.edu.scu.jiangpeyton.keyshoot.filter;
 
 import com.google.common.collect.ImmutableMap;
 

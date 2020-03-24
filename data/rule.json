@@ -18,15 +18,15 @@
         "accessID": {
           "pattern": "LTAI4F[a-zA-Z0-9]{18}",
           "len": 24,
-          "entropy": 40.0,
-          "MLE": 3.0,
+          "entropy": 66.130904,
+          "MLE": 3.473405,
           "base64": false
         },
         "secretKey": {
           "pattern": "[a-zA-Z0-9]{30}",
           "len": 30,
-          "entropy": 50.0,
-          "MLE": 3.0,
+          "entropy": 87.439725,
+          "MLE": 3.714985,
           "base64": false
         }
       }
@@ -38,24 +38,54 @@
       "obfs": true,
       "apiClass": "com.baidubce.AbstractBceClient",
       "methodNeeded": false,
-      "apiMethod":"",
+      "apiMethod": "",
       "hash": [
         "097d33103c9b9b429c48edb7a54b119bc791bf7315fd8e28941044eea745970f"
       ],
       "key": {
         "accessID": {
-          "pattern":"[a-f0-9]{32}",
-          "len":32,
-          "entropy":50.0,
-          "MLE":3.0,
-          "base64":false
+          "pattern": "[a-f0-9]{32}",
+          "len": 32,
+          "entropy": 74.236634,
+          "MLE": 2.524584,
+          "base64": false
         },
-        "secretKey":{
-          "pattern":"[a-f0-9]{32}",
-          "len":32,
-          "entropy":50.0,
-          "MLE":3.0,
-          "base64":false 
+        "secretKey": {
+          "pattern": "[a-f0-9]{32}",
+          "len": 32,
+          "entropy": 74.236634,
+          "MLE": 2.524584,
+          "base64": false
+        }
+      }
+    },
+    {
+      "name": "COS",
+      "provider": "tencent",
+      "packageName": "com.tencent.cos",
+      "obfs": true,
+      "apiClass": "com.tencent.cos.xml.model.CosXmlRequest",
+      "methodNeeded": false,
+      "apiMethod": "",
+      "hash": [
+        "ab04fa4ccd2c4ae80732949b2758c078a8ac7374bf34f1ac80dcbd20ddc60a05",
+        "d5a68a5d5429ff0b6116042348fa5422115dc554102202910ef43c0577dec012",
+        "7119f95453930cfd683545ccb15aa0eef4c2ce4aa6343622fb0e74d658acad2a"
+      ],
+      "key": {
+        "accessID": {
+          "pattern": "AKID[a-zA-Z0-9]{32}",
+          "len": 36,
+          "entropy": 106.825493,
+          "MLE": 3.285933,
+          "base64": false
+        },
+        "secretKey": {
+          "pattern": "[a-zA-Z0-9]{32}",
+          "len": 32,
+          "entropy": 92.201543,
+          "MLE": 3.368375,
+          "base64": false
         }
       }
     }

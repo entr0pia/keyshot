@@ -1,15 +1,16 @@
-package cn.edu.scu.jiangpeyton.keyshot;
+package cn.edu.scu.jiangpeyton.keyshoot;
 
 
-import cn.edu.scu.jiangpeyton.keyshot.caclhash.ClassHash;
-import cn.edu.scu.jiangpeyton.keyshot.caclhash.ClassHashMap;
-import cn.edu.scu.jiangpeyton.keyshot.filter.FilterKey;
-import cn.edu.scu.jiangpeyton.keyshot.graph.CalleeGraph;
-import cn.edu.scu.jiangpeyton.keyshot.requests.APIRequest;
-import cn.edu.scu.jiangpeyton.keyshot.requests.AliOSS;
-import cn.edu.scu.jiangpeyton.keyshot.requests.BaiduBOS;
-import cn.edu.scu.jiangpeyton.keyshot.rule.API;
-import cn.edu.scu.jiangpeyton.keyshot.rule.Rule;
+import cn.edu.scu.jiangpeyton.keyshoot.caclhash.ClassHash;
+import cn.edu.scu.jiangpeyton.keyshoot.caclhash.ClassHashMap;
+import cn.edu.scu.jiangpeyton.keyshoot.filter.FilterKey;
+import cn.edu.scu.jiangpeyton.keyshoot.graph.CalleeGraph;
+import cn.edu.scu.jiangpeyton.keyshoot.requests.APIRequest;
+import cn.edu.scu.jiangpeyton.keyshoot.requests.AliOSS;
+import cn.edu.scu.jiangpeyton.keyshoot.requests.BaiduBOS;
+import cn.edu.scu.jiangpeyton.keyshoot.requests.QCloudCOS;
+import cn.edu.scu.jiangpeyton.keyshoot.rule.API;
+import cn.edu.scu.jiangpeyton.keyshoot.rule.Rule;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.google.gson.Gson;
@@ -36,7 +37,7 @@ public class Main {
     public static String logFile;
     public static String packageName;
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         // write your code here
         //初始化目录
         init();
@@ -68,10 +69,10 @@ public class Main {
             return;
         }
 
-        /*APIRequest apiRequest=new BaiduBOS();
+        /*APIRequest apiRequest=new QCloudCOS();
         try {
             apiRequest.clientBuilder();
-            System.out.println(apiRequest.shot());
+            System.out.println(apiRequest.shoot());
         } catch (Exception e) {
             e.printStackTrace();
         }*/
@@ -115,8 +116,8 @@ public class Main {
 
         try (ApkFile apkFile = new ApkFile(new File(path_to_apk))) {
             packageName = apkFile.getApkMeta().getPackageName();
-        } catch (ZipException e){
-            e.printStackTrace();
+        } catch (ZipException e) {
+            //e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -141,7 +142,7 @@ public class Main {
         // 绘制调用关系图
         CalleeGraph calleeGraph = new CalleeGraph();
 
-        if(Params.DEBUG) {
+        if (Params.DEBUG) {
             for (SootClass sootClass : Scene.v().getClasses()) {
                 if (sootClass.getName().contains("com.baidubce.AbstractBceClient")) {
                     ClassHash hash = new ClassHash(sootClass);
@@ -162,11 +163,23 @@ public class Main {
                         // 计算目标哈希值
                         ClassHash hash = new ClassHash(sootClass);
                         //System.out.println(sootClass.getName() + ": " + hash.getHash());
-                        for (SootMethod sootMethod : sootClass.getMethods()) {
-                            if (sootMethod.getSubSignature().equals(profile.apiMethod)) {
-                                System.out.println(sootMethod.getSubSignature() + ": " + ClassHashMap.methodHashMapRe.get(sootMethod));
-                                profile.hash.add(ClassHashMap.methodHashMapRe.get(sootMethod));
-                                break;
+                        if (profile.methodNeeded) {
+                            for (SootMethod sootMethod : sootClass.getMethods()) {
+                                if (sootMethod.getSubSignature().equals(profile.apiMethod)) {
+                                    //System.out.println(sootMethod.getSubSignature() + ": " + ClassHashMap.methodHashMapRe.get(sootMethod));
+                                    String hashValue = ClassHashMap.methodHashMapRe.get(sootMethod);
+                                    if (!profile.hash.contains(hashValue)) {
+                                        profile.hash.add(ClassHashMap.methodHashMapRe.get(sootMethod));
+                                        logging(packageName, profile.packageName + "添加新的哈希值: " + hashValue, LogCode.UPDATE);
+                                    }
+                                    break;
+                                }
+                            }
+                        } else {
+                            String hashValue = hash.getHash();
+                            if (!profile.hash.contains(hashValue)) {
+                                profile.hash.add(hash.getHash());
+                                logging(packageName, profile.packageName + "添加新的哈希值: " + hashValue, LogCode.UPDATE);
                             }
                         }
                     }
@@ -205,8 +218,8 @@ public class Main {
             for (SootClass i : Scene.v().getClasses()) {
                 if (i.getName().contains(profile.packageName)) {
                     StringBuilder msg = new StringBuilder();
-                    msg.append("发现目标package >> ").append(profile.packageName);
-                    logging(packageName, msg.toString(),LogCode.FOUNDAPI);
+                    msg.append("发现目标package: ").append(profile.packageName);
+                    logging(packageName, msg.toString(), LogCode.FOUNDAPI);
                     for (SootClass sootClass : calleeGraph.slicingStr.keySet()) {
                         Set<String> slicing = calleeGraph.slicingStr.get(sootClass);
                         FilterKey filter = new FilterKey(slicing, profile.key);
@@ -222,37 +235,38 @@ public class Main {
             }
             if (profile.obfs && !found) {
                 // 若目标sdk支持混淆, 则通过哈希值识别
-                logging(packageName, "未检测到目标sdk, 尝试哈希匹配");
+                logging(packageName, "未检测到目标sdk: " + profile.packageName + ", 尝试哈希匹配");
                 for (String hash : profile.hash) {
                     StringBuilder msg = new StringBuilder();
                     if (profile.methodNeeded && ClassHashMap.methodHashMap.containsKey(hash)) {
                         // 发现目标method, 提取密钥
-                        msg.append("发现目标method >> ")
+                        logging(packageName, "使用了混淆", LogCode.OBFSED);
+                        msg.append("发现目标method: ")
                                 .append(profile.apiClass)
                                 .append(':')
                                 .append(profile.apiMethod);
-                        logging(packageName, msg.toString(),LogCode.FOUNDAPI);
+                        logging(packageName, msg.toString(), LogCode.FOUNDAPI);
                         for (SootClass sootClass : calleeGraph.slicingStr.keySet()) {
                             Set<String> slicing = calleeGraph.slicingStr.get(sootClass);
                             FilterKey filter = new FilterKey(slicing, profile.key);
                             if (filter.isPaired()) {
                                 // 发现成对密钥, 进行零泄漏检测
-                                logging(packageName, "发现成对密钥, 进行零泄漏检测");
+                                //logging(packageName, "发现成对密钥, 进行零泄漏检测");
                                 request(filter, profile);
                             }
                         }
                         break;
                     }
-                    if(!profile.methodNeeded && ClassHashMap.classHashMap.containsKey(hash)){
-                        msg.append("发现目标class >> ")
+                    if (!profile.methodNeeded && ClassHashMap.classHashMap.containsKey(hash)) {
+                        msg.append("发现目标class: ")
                                 .append(profile.apiClass);
-                        logging(packageName, msg.toString(),LogCode.FOUNDAPI);
+                        logging(packageName, msg.toString(), LogCode.FOUNDAPI);
                         for (SootClass sootClass : calleeGraph.slicingStr.keySet()) {
                             Set<String> slicing = calleeGraph.slicingStr.get(sootClass);
                             FilterKey filter = new FilterKey(slicing, profile.key);
                             if (filter.isPaired()) {
                                 // 发现成对密钥, 进行零泄漏检测
-                                logging(packageName, "发现成对密钥, 进行零泄漏检测");
+                                //logging(packageName, "发现成对密钥, 进行零泄漏检测");
                                 request(filter, profile);
                             }
                         }
@@ -265,7 +279,7 @@ public class Main {
 
     public static void lsFile(File file) {
         // 遍历目录
-        if(file.isDirectory()) {
+        if (file.isDirectory()) {
             for (File sub : Objects.requireNonNull(file.listFiles())) {
                 if (sub.isDirectory()) {
                     lsFile(sub);
@@ -273,6 +287,7 @@ public class Main {
                     try {
                         factory(sub.getAbsolutePath());
                     } catch (Exception e) {
+                        logging(sub.getName(), e.toString());
                         //e.printStackTrace();
                     }
                 }
@@ -285,30 +300,33 @@ public class Main {
         APIRequest apiRequest;
         if (profile.packageName.equals("com.alibaba.sdk.android.oss")) {
             apiRequest = new AliOSS();
-        } else if(profile.packageName.equals("com.baidubce.services.bos")){
-            apiRequest=new BaiduBOS();
-        }
-        else {
+        } else if (profile.packageName.equals("com.baidubce.services.bos")) {
+            apiRequest = new BaiduBOS();
+        } else if (profile.packageName.equals("com.tencent.cos")) {
+            apiRequest = new QCloudCOS();
+        } else {
             return;
         }
         for (String accessID : filter.getAccessID()) {
             for (String secretKey : filter.getSecretKey()) {
-                if(accessID.equals(secretKey)){
+                if (accessID.equals(secretKey)) {
                     continue;
                 }
                 //System.out.println(accessID+", "+secretKey);
+                StringBuilder builder = new StringBuilder()
+                        .append("发现疑似密钥对: ")
+                        .append(profile.packageName)
+                        .append(" (")
+                        .append(accessID)
+                        .append(", ")
+                        .append(secretKey)
+                        .append(')');
+                logging(packageName, builder.toString(), LogCode.FOUNDKEY);
                 try {
                     apiRequest.setAccessKeyId(accessID);
                     apiRequest.setAccessKeySecret(secretKey);
                     apiRequest.clientBuilder();
-                    StringBuilder builder = new StringBuilder()
-                            .append("发现真实密钥对: (")
-                            .append(accessID)
-                            .append(", ")
-                            .append(secretKey)
-                            .append(')');
-                    if (apiRequest.shot()) {
-                        logging(packageName, builder.toString(),LogCode.FOUNDKEY);
+                    if (apiRequest.shoot()) {
                         logging(packageName, "密钥使用错误, 权限过高", LogCode.KEYERROR);
                     } else {
                         logging(packageName, "密钥使用正确");
@@ -320,11 +338,11 @@ public class Main {
         }
     }
 
-    public static void logging(String packageName, String msg){
-        logging(packageName,msg, LogCode.NORMAL);
+    public static void logging(String packageName, String msg) {
+        logging(packageName, msg, LogCode.NORMAL);
     }
 
-    public static void logging(String packageName, String msg,int code) {
+    public static void logging(String packageName, String msg, int code) {
         // 写日志文件
         try {
             OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(new File(logFile), true), StandardCharsets.UTF_8);
