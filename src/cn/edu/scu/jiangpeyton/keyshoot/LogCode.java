@@ -7,4 +7,5 @@ public class LogCode {
     public static int FOUNDKEY = 4003;
     public static int OBFSED = 4004;
     public static int KEYERROR = 4007;
+    public static int INTERRUPT=4011;
 }
