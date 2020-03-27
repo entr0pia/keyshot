@@ -4,7 +4,7 @@ package cn.edu.scu.jiangpeyton.keyshoot.filter;
 import org.apache.commons.lang3.StringUtils;
 import soot.util.ArraySet;
 
-import java.util.Set;
+import java.util.*;
 
 public class Entropy {
     private String s;
@@ -30,12 +30,20 @@ public class Entropy {
 
     public static double getEntropy(String s) {
         double entropy = 0.0;
-        for (char c : s.toCharArray()) {
+        for (char c : toCharSet(s)) {
             int counts = StringUtils.countMatches(s, c);
             double p = (double) counts / s.length();
             entropy += -Math.log(p);
         }
         return entropy;
+    }
+
+    public static Set<Character> toCharSet(String s){
+        Set<Character> characters=new ArraySet<>();
+        for(char c:s.toCharArray()){
+            characters.add(c);
+        }
+        return characters;
     }
 
     public String getS() {

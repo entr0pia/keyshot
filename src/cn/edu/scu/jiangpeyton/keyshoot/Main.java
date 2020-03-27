@@ -30,6 +30,7 @@ import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.*;
 import java.util.zip.ZipException;
 
 public class Main {
@@ -91,7 +92,11 @@ public class Main {
             File apks = new File(Params.PATH_TO_APK);
             lsFile(apks);
         } else {
-            factory(Params.PATH_TO_APK);
+            try {
+                factory(Params.PATH_TO_APK);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -101,8 +106,8 @@ public class Main {
 
     public static void init() {
         //创建数据存储目录
-        File data = new File("data");
-        data.mkdir();
+        /*File data = new File("data");
+        data.mkdir();*/
 
         //创建日志存储目录
         File log = new File("log");
@@ -110,23 +115,25 @@ public class Main {
     }
 
 
-    public static void factory(String path_to_apk) {
+    public static boolean factory(String path_to_apk) throws Exception,Error{
         // 处理apk文件
         System.out.println("for apk: " + path_to_apk);
 
         try (ApkFile apkFile = new ApkFile(new File(path_to_apk))) {
             packageName = apkFile.getApkMeta().getPackageName();
         } catch (ZipException e) {
+            return false;
             //e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
         logging(packageName, "Starting...");
 
         // 设置flowdroid
         soot.G.reset();
         Options.v().set_src_prec(Options.src_prec_apk);
-        Options.v().set_no_bodies_for_excluded(true);
+        //Options.v().set_no_bodies_for_excluded(true);
         Options.v().set_process_dir(Collections.singletonList(path_to_apk));
         Options.v().set_android_jars(Params.ANDROID_JAR);
         //Options.v().set_force_android_jar(android_jar);
@@ -134,13 +141,24 @@ public class Main {
         Options.v().set_whole_program(true);
         Options.v().set_allow_phantom_refs(true);
         Options.v().set_output_format(Options.output_format_none);
-        Options.v().ignore_resolution_errors();
-        Scene.v().loadNecessaryClasses();
-        PackManager.v().runPacks();
+        CalleeGraph calleeGraph;
+        try {
+            Options.v().ignore_resolution_errors();
+            Scene.v().loadNecessaryClasses();
+            PackManager.v().runPacks();
 
+            // 绘制调用关系图
+            calleeGraph = new CalleeGraph();
+        } catch (Error e) {
+            e.printStackTrace();
+            logging(packageName, e.getMessage(), LogCode.INTERRUPT);
+            return false;
+        }catch (Exception e){
+            e.printStackTrace();
+            logging(packageName, e.getMessage(), LogCode.INTERRUPT);
+            return false;
+        }
 
-        // 绘制调用关系图
-        CalleeGraph calleeGraph = new CalleeGraph();
 
         if (Params.DEBUG) {
             for (SootClass sootClass : Scene.v().getClasses()) {
@@ -150,7 +168,7 @@ public class Main {
                 /*for (SootMethod sootMethod:sootClass.getMethods()){
                     System.out.println(sootMethod.getSubSignature() + ": " + ClassHashMap.methodHashMapRe.get(sootMethod));
                 }*/
-                    return;
+                    return false;
                 }
             }
         }
@@ -198,16 +216,19 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return;
+            return false;
         }
 
         // 计算全部哈希值
         for (SootClass sootClass : Scene.v().getClasses()) {
             try {
                 ClassHash hash = new ClassHash(sootClass);
-            } catch (StackOverflowError e) {
-                logging(packageName, e.toString());
+            } catch (Exception e) {
                 e.printStackTrace();
+                logging(packageName, e.toString(),LogCode.INTERRUPT);
+            }catch (Error e){
+                e.printStackTrace();
+                logging(packageName, e.toString(),LogCode.INTERRUPT);
             }
         }
 
@@ -275,6 +296,7 @@ public class Main {
                 }
             }
         }
+        return true;
     }
 
     public static void lsFile(File file) {
@@ -284,11 +306,33 @@ public class Main {
                 if (sub.isDirectory()) {
                     lsFile(sub);
                 } else {
+                    ExecutorService executor = Executors.newCachedThreadPool();
+                    Callable<Object> task = new Callable<Object>() {
+                        public Object call() {
+                            try {
+                                return factory(sub.getAbsolutePath());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            return false;
+                        }
+                    };
+                    // 设置任务超时
+                    Future<Object> future = executor.submit(task);
                     try {
-                        factory(sub.getAbsolutePath());
+                        Object result = future.get(10, TimeUnit.MINUTES);
+                    } catch (TimeoutException e) {
+                        e.printStackTrace();
+                        logging(sub.getName(), e.getMessage(), LogCode.INTERRUPT);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        logging(sub.getName(), e.getMessage(), LogCode.INTERRUPT);
                     } catch (Exception e) {
-                        logging(sub.getName(), e.toString());
-                        //e.printStackTrace();
+                        e.printStackTrace();
+                        logging(sub.getName(), e.getMessage(), LogCode.INTERRUPT);
+                    } catch (Error e){
+                        e.printStackTrace();
+                        logging(sub.getName(), e.getMessage(), LogCode.INTERRUPT);
                     }
                 }
             }
@@ -355,7 +399,7 @@ public class Main {
                     .append("] ")
                     .append(msg)
                     .append(System.getProperty("line.separator"));
-            System.out.print(builder.toString());
+            //System.out.print(builder.toString());
             writer.write(builder.toString());
             writer.flush();
             writer.close();
