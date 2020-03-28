@@ -70,14 +70,6 @@ public class Main {
             return;
         }
 
-        /*APIRequest apiRequest=new QCloudCOS();
-        try {
-            apiRequest.clientBuilder();
-            System.out.println(apiRequest.shoot());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-
 
         // 读取规则文件
         try {
@@ -115,7 +107,7 @@ public class Main {
     }
 
 
-    public static boolean factory(String path_to_apk) throws Exception,Error{
+    public static boolean factory(String path_to_apk) throws Exception, Error {
         // 处理apk文件
         System.out.println("for apk: " + path_to_apk);
 
@@ -153,7 +145,7 @@ public class Main {
             e.printStackTrace();
             logging(packageName, e.getMessage(), LogCode.INTERRUPT);
             return false;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             logging(packageName, e.getMessage(), LogCode.INTERRUPT);
             return false;
@@ -162,43 +154,36 @@ public class Main {
 
         if (Params.DEBUG) {
             for (SootClass sootClass : Scene.v().getClasses()) {
-                if (sootClass.getName().contains("com.baidubce.AbstractBceClient")) {
-                    ClassHash hash = new ClassHash(sootClass);
-                    System.out.println(sootClass.getName() + ": " + hash.getHash());
+                for (API profile : Params.RULE.profiles) {
+                    String target = profile.packageName;
+                    if (sootClass.getName().contains(target)) {
+                        ClassHash hash = new ClassHash(sootClass);
+                        if (sootClass.getFieldCount() > 4 && sootClass.getMethodCount() > 7) {
+                            System.out.println(hash.getHash());
+                        }
+                    }
                 /*for (SootMethod sootMethod:sootClass.getMethods()){
                     System.out.println(sootMethod.getSubSignature() + ": " + ClassHashMap.methodHashMapRe.get(sootMethod));
                 }*/
-                    return false;
                 }
             }
+            return false;
         }
         // 更新规则文件
         if (Params.UPDATE_DATA) {
             for (SootClass sootClass : Scene.v().getClasses()) {
                 for (API profile : Params.RULE.profiles) {
                     // 匹配规则文件
-                    if (sootClass.getName().equals(profile.apiClass)) {
+                    String target = profile.packageName;
+                    if (sootClass.getName().contains(target)
+                            && sootClass.getMethodCount() > 7
+                            && sootClass.getFieldCount() > 4) {
                         // 计算目标哈希值
                         ClassHash hash = new ClassHash(sootClass);
-                        //System.out.println(sootClass.getName() + ": " + hash.getHash());
-                        if (profile.methodNeeded) {
-                            for (SootMethod sootMethod : sootClass.getMethods()) {
-                                if (sootMethod.getSubSignature().equals(profile.apiMethod)) {
-                                    //System.out.println(sootMethod.getSubSignature() + ": " + ClassHashMap.methodHashMapRe.get(sootMethod));
-                                    String hashValue = ClassHashMap.methodHashMapRe.get(sootMethod);
-                                    if (!profile.hash.contains(hashValue)) {
-                                        profile.hash.add(ClassHashMap.methodHashMapRe.get(sootMethod));
-                                        logging(packageName, profile.packageName + "添加新的哈希值: " + hashValue, LogCode.UPDATE);
-                                    }
-                                    break;
-                                }
-                            }
-                        } else {
-                            String hashValue = hash.getHash();
-                            if (!profile.hash.contains(hashValue)) {
-                                profile.hash.add(hash.getHash());
-                                logging(packageName, profile.packageName + "添加新的哈希值: " + hashValue, LogCode.UPDATE);
-                            }
+                        String hashValue = hash.getHash();
+                        if (!profile.hash.contains(hashValue)) {
+                            profile.hash.add(hash.getHash());
+                            logging(packageName, profile.packageName + "添加新的哈希值: " + hashValue, LogCode.UPDATE);
                         }
                     }
                 }
@@ -225,10 +210,10 @@ public class Main {
                 ClassHash hash = new ClassHash(sootClass);
             } catch (Exception e) {
                 e.printStackTrace();
-                logging(packageName, e.toString(),LogCode.INTERRUPT);
-            }catch (Error e){
+                logging(packageName, e.toString(), LogCode.INTERRUPT);
+            } catch (Error e) {
                 e.printStackTrace();
-                logging(packageName, e.toString(),LogCode.INTERRUPT);
+                logging(packageName, e.toString(), LogCode.INTERRUPT);
             }
         }
 
@@ -258,8 +243,7 @@ public class Main {
                 // 若目标sdk支持混淆, 则通过哈希值识别
                 logging(packageName, "未检测到目标sdk: " + profile.packageName + ", 尝试哈希匹配");
                 for (String hash : profile.hash) {
-                    StringBuilder msg = new StringBuilder();
-                    if (profile.methodNeeded && ClassHashMap.methodHashMap.containsKey(hash)) {
+                    /*if (profile.methodNeeded && ClassHashMap.methodHashMap.containsKey(hash)) {
                         // 发现目标method, 提取密钥
                         logging(packageName, "使用了混淆", LogCode.OBFSED);
                         msg.append("发现目标method: ")
@@ -277,11 +261,9 @@ public class Main {
                             }
                         }
                         break;
-                    }
-                    if (!profile.methodNeeded && ClassHashMap.classHashMap.containsKey(hash)) {
-                        msg.append("发现目标class: ")
-                                .append(profile.apiClass);
-                        logging(packageName, msg.toString(), LogCode.FOUNDAPI);
+                    }*/
+                    if (ClassHashMap.classHashMap.containsKey(hash)) {
+                        logging(packageName, "哈希匹配成功", LogCode.FOUNDAPI);
                         for (SootClass sootClass : calleeGraph.slicingStr.keySet()) {
                             Set<String> slicing = calleeGraph.slicingStr.get(sootClass);
                             FilterKey filter = new FilterKey(slicing, profile.key);
@@ -330,7 +312,7 @@ public class Main {
                     } catch (Exception e) {
                         e.printStackTrace();
                         logging(sub.getName(), e.getMessage(), LogCode.INTERRUPT);
-                    } catch (Error e){
+                    } catch (Error e) {
                         e.printStackTrace();
                         logging(sub.getName(), e.getMessage(), LogCode.INTERRUPT);
                     }

@@ -5,15 +5,6 @@
       "provider": "alibaba",
       "packageName": "com.alibaba.sdk.android.oss",
       "obfs": false,
-      "apiClass": "com.alibaba.sdk.android.oss.internal.InternalRequestOperation",
-      "methodNeeded": true,
-      "apiMethod": "void <init>(android.content.Context,java.net.URI,com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider,com.alibaba.sdk.android.oss.ClientConfiguration)",
-      "hash": [
-        "ecf926660c64b73931063ed2f93ee3dcd64a65a1f2fae3acd73c3ca7080c3903",
-        "21ae32f44efbfff9f24e39975630ae65e7a4573aedddb00200fcc16efbcc0e1e",
-        "d620f973e8d5166e16b7e51f0c5347720319b2cbd826715a188571d094ff53d7",
-        "0f7da54be5c9c8186f7b28d0f924b03afae36f153d9501c390b3a41802477cb1"
-      ],
       "key": {
         "accessID": {
           "pattern": "LTAI4F[a-zA-Z0-9]{18}",
@@ -36,11 +27,26 @@
       "provider": "baidu",
       "packageName": "com.baidubce.services.bos",
       "obfs": true,
-      "apiClass": "com.baidubce.AbstractBceClient",
-      "methodNeeded": false,
-      "apiMethod": "",
       "hash": [
-        "097d33103c9b9b429c48edb7a54b119bc791bf7315fd8e28941044eea745970f"
+        "347dd3501c0bc5878f631b5029b789cd9353df46deef41b8e60fd1d4f35791bd",
+        "4d8fb79645ee52d670feef0cab9402efb91791ff57abca26a6aa2966481c239c",
+        "ffedda99d9b614bdfec35512d17ee180276c76f6a44403ce91c5c4a48e2b7599",
+        "209da8b9c172a1de610bedf8c3aef7a7a269e30c2b6f15c3bbd2dcec78d98fe4",
+        "4ca2489df17c4544e8f3e2bd0287598c7933b1590fd9a951ef1f2aebe6715976",
+        "354d7c2fcf17bcab8206cbe7bb4cb88a01b8e322fc9b9b3b4df45a899b6a5db7",
+        "dd4aa617880af14ee0ada4d0dc501807e47510fd99e1bcafdddb32e49154bfff",
+        "ccd7fc3b2dc1448cb5b6175593ac739013f4f820cda7a8b27de96a2784880e82",
+        "26c56a5183a405cfa683234d0185d1df0e46751800891ca48614ff8ecb8150a0",
+        "53d7fc3a5a4cc8f883ae43f151e3307da8f311f313769a600442fffc301b02d1",
+        "400b97e2739eff10e0472891699867813a88f5ca379f82f4c3e5b0db809d0c0e",
+        "cf021387ec92c10e8c6c6d653751ff0153c308addc5a81f70b65d87e663f4ece",
+        "433cf66c92a13c83767537554c951945e7e1b14d63b9ab79cdbb93a77c991e11",
+        "f332b03719cd72217bcf82146dbf35dbfd3916185c3c09616aa80744bb5f630f",
+        "1b9fcd54f0338e6438ce4bace8548841c91733c689879c07e8591d605a87b45f",
+        "3be784b6437252600945476010c681cbef1bee2dbf59e84e8df24921c6a7b7c3",
+        "6b34cde90f8e80e8ddf77f713d8df5a529100d766977cc68ddca987e42f07572",
+        "ad962aca040c8f2d95f741d30890a436867c943cbec959d053be6530d8ad8815",
+        "2a6ac2a40b3c8b4ef76cae199a41de0afd3dc30e4cc3fd3cbef55546d3075f72"
       ],
       "key": {
         "accessID": {
@@ -64,13 +70,32 @@
       "provider": "tencent",
       "packageName": "com.tencent.cos",
       "obfs": true,
-      "apiClass": "com.tencent.cos.xml.model.CosXmlRequest",
-      "methodNeeded": false,
-      "apiMethod": "",
       "hash": [
-        "ab04fa4ccd2c4ae80732949b2758c078a8ac7374bf34f1ac80dcbd20ddc60a05",
-        "d5a68a5d5429ff0b6116042348fa5422115dc554102202910ef43c0577dec012",
-        "7119f95453930cfd683545ccb15aa0eef4c2ce4aa6343622fb0e74d658acad2a"
+        "3d58cdf401d9928cca827ebd3cb4d235063c479605731d956a94bba10f69f330",
+        "236ae3c13d09aac932e1e92af082a2de61b135709201729ee7d670cdd685bf6e",
+        "8983d8e3fb558007e5f7324fe0fc76b0c5a02c77a5e93a1445c83413cdffeb9f",
+        "14641e2def74e6b489fe93758046cdcd777477992826478bc4c859b75eef3baf",
+        "500121aa7102f8a5d3e67984743b68414f60b56360852a479c0f2eb89760162d",
+        "58356f5fc25a1bccfb9c375a6a1328e2671149cc8f4ff243e8ca819a77e5fecc",
+        "59b2379d07e18e36543b2ce483d0b2cae8e31904ba7251938008b95de9541cf5",
+        "1385384292fd9d4591d69e6ca613951df2bb96c03efcabb4172f6b02c2b529eb",
+        "9d5bac657bf6dbd8b2906f7ec60a8938c7438dc49cd2d99fbbab9bbfbef158b7",
+        "2ca8cae9bd006da43eebdca051900182c1254e0510cda381bd9ec0683792056d",
+        "94536695d16a82c1e1994fa73c671eda9286196df0c79c1a0b31fa41e869d1ef",
+        "d0e63de80c77ff0134e63baf3cecdbba796f13bb574ca23383b3dce28b4f5f4d",
+        "1c8d606c755042fc7e447da1a5f1d75d22dea31038c3cb973b68bc4232ce4c4f",
+        "8f7446e77f5e6aa420a2f17831c5db7a2f3745465f4b2ef7d2eaf182fe36ca36",
+        "e7aeec66b2735efeb151958191f072882d4b0e4aef7f9d462e62aa26303a6f36",
+        "645356f5e19c4ede74bef0bc754d0032a27d591cf28186fd91ec9738768c7d1a",
+        "1f4b43e654e6dd86f781186572946e2f63dde1fd00285214ab9eaca92426cf85",
+        "a2e34654418fb8cb4031ed0374c3b8051106e898a7a6323f7b8743d042b0d750",
+        "91acac6dbe13b60c63cc49ab75fcb6a7aab04674bb163d03dde383777fe3968b",
+        "728c30897daa2bc811d54115452563f7480c5652f37f012acd6f3afec0d5fcb8",
+        "086dec9fbe2c0aeda376fcadd85a90b180f5c7c250eed2aab7f2931e9ae5a1fb",
+        "5e071e9e9b9ff6edb7d25799afcea077f5931a7e546be3bee9da788f958084c1",
+        "b6738d06da38e8a9a01ff55cb205f6a3859dce81d996b8a8759f03976a37789f",
+        "21d557cf17287521be3f70517eba33fbea45aed878b431039870f6ebadd81995",
+        "b690a45744e93c24018185c843673de54d525b391fbbf88ce2d6808b59d37aa7"
       ],
       "key": {
         "accessID": {

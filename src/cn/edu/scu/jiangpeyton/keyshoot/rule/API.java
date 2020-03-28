@@ -9,9 +9,6 @@ public class API {
     public String provider;
     public String packageName;
     public boolean obfs;
-    public String apiClass;
-    public boolean methodNeeded;
-    public String apiMethod;
     public Set<String> hash = new ArraySet<>();
     public Key key;
 }
