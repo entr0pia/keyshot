@@ -153,13 +153,13 @@ public class Main {
 
         // 计算全部哈希值
         for (SootClass sootClass : Scene.v().getClasses()) {
-            if(ClassHashMap.classHashMapRe.containsKey(sootClass)){
+            if (ClassHashMap.classHashMapRe.containsKey(sootClass)) {
                 continue;
             }
             try {
                 ClassHash hash = new ClassHash(sootClass);
                 //ClassHashMap.classHashMap.put(hash.getHash(), sootClass);
-                ClassHashMap.addClassMap(sootClass,hash.getHash());
+                ClassHashMap.addClassMap(sootClass, hash.getHash());
             } catch (Exception e) {
                 e.printStackTrace();
                 logging(packageName, e.toString(), LogCode.INTERRUPT);
@@ -277,7 +277,6 @@ public class Main {
                 FilterKey filter = new FilterKey(slicing, profile.key);
                 if (filter.isPaired()) {
                     // 发现成对密钥, 进行零泄漏检测
-                    logging(packageName, "检测到云服务SDK: " + profile.packageName, LogCode.FOUNDAPI);
                     request(filter, profile);
                 }
             }
@@ -306,19 +305,18 @@ public class Main {
                     // 设置任务超时
                     Future<Object> future = executor.submit(task);
                     try {
-                        Object result = future.get(10, TimeUnit.MINUTES);
+                        Object result = future.get(7, TimeUnit.MINUTES);
                     } catch (TimeoutException e) {
                         e.printStackTrace();
                         logging(sub.getName(), e.getMessage(), LogCode.INTERRUPT);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                        logging(sub.getName(), e.getMessage(), LogCode.INTERRUPT);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        logging(sub.getName(), e.getMessage(), LogCode.INTERRUPT);
                     } catch (Error e) {
                         e.printStackTrace();
-                        logging(sub.getName(), e.getMessage(), LogCode.INTERRUPT);
+                    }finally {
+                        future.cancel(true);
                     }
                 }
             }
@@ -342,6 +340,7 @@ public class Main {
                 if (accessID.equals(secretKey)) {
                     continue;
                 }
+                logging(packageName, "检测到云服务SDK: " + profile.packageName);
                 //System.out.println(accessID+", "+secretKey);
                 StringBuilder builder = new StringBuilder()
                         .append("发现疑似密钥对: ")
