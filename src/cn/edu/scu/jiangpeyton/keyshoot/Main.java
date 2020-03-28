@@ -125,7 +125,7 @@ public class Main {
         // 设置flowdroid
         soot.G.reset();
         Options.v().set_src_prec(Options.src_prec_apk);
-        //Options.v().set_no_bodies_for_excluded(true);
+        Options.v().set_no_bodies_for_excluded(true);
         Options.v().set_process_dir(Collections.singletonList(path_to_apk));
         Options.v().set_android_jars(Params.ANDROID_JAR);
         //Options.v().set_force_android_jar(android_jar);
@@ -151,6 +151,23 @@ public class Main {
             return false;
         }
 
+        // 计算全部哈希值
+        for (SootClass sootClass : Scene.v().getClasses()) {
+            if(ClassHashMap.classHashMapRe.containsKey(sootClass)){
+                continue;
+            }
+            try {
+                ClassHash hash = new ClassHash(sootClass);
+                //ClassHashMap.classHashMap.put(hash.getHash(), sootClass);
+                ClassHashMap.addClassMap(sootClass,hash.getHash());
+            } catch (Exception e) {
+                e.printStackTrace();
+                logging(packageName, e.toString(), LogCode.INTERRUPT);
+            } catch (Error e) {
+                e.printStackTrace();
+                logging(packageName, e.toString(), LogCode.INTERRUPT);
+            }
+        }
 
         if (Params.DEBUG) {
             for (SootClass sootClass : Scene.v().getClasses()) {
@@ -158,7 +175,7 @@ public class Main {
                     String target = profile.packageName;
                     if (sootClass.getName().contains(target)) {
                         ClassHash hash = new ClassHash(sootClass);
-                        if (sootClass.getFieldCount() > 4 && sootClass.getMethodCount() > 7) {
+                        if (sootClass.getFieldCount() > 2 && sootClass.getMethodCount() > 4) {
                             System.out.println(hash.getHash());
                         }
                     }
@@ -176,8 +193,8 @@ public class Main {
                     // 匹配规则文件
                     String target = profile.packageName;
                     if (sootClass.getName().contains(target)
-                            && sootClass.getMethodCount() > 7
-                            && sootClass.getFieldCount() > 4) {
+                            && sootClass.getMethodCount() > 4
+                            && sootClass.getFieldCount() > 2) {
                         // 计算目标哈希值
                         ClassHash hash = new ClassHash(sootClass);
                         String hashValue = hash.getHash();
@@ -202,19 +219,6 @@ public class Main {
                 e.printStackTrace();
             }
             return false;
-        }
-
-        // 计算全部哈希值
-        for (SootClass sootClass : Scene.v().getClasses()) {
-            try {
-                ClassHash hash = new ClassHash(sootClass);
-            } catch (Exception e) {
-                e.printStackTrace();
-                logging(packageName, e.toString(), LogCode.INTERRUPT);
-            } catch (Error e) {
-                e.printStackTrace();
-                logging(packageName, e.toString(), LogCode.INTERRUPT);
-            }
         }
 
         // 匹配规则文件
@@ -263,18 +267,18 @@ public class Main {
                         break;
                     }*/
                     if (ClassHashMap.classHashMap.containsKey(hash)) {
-                        logging(packageName, "哈希匹配成功", LogCode.FOUNDAPI);
-                        for (SootClass sootClass : calleeGraph.slicingStr.keySet()) {
-                            Set<String> slicing = calleeGraph.slicingStr.get(sootClass);
-                            FilterKey filter = new FilterKey(slicing, profile.key);
-                            if (filter.isPaired()) {
-                                // 发现成对密钥, 进行零泄漏检测
-                                //logging(packageName, "发现成对密钥, 进行零泄漏检测");
-                                request(filter, profile);
-                            }
-                        }
+                        logging(packageName, profile.packageName + "哈希匹配成功", LogCode.FOUNDAPI);
                         break;
                     }
+                }
+            }
+            for (SootClass sootClass : calleeGraph.slicingStr.keySet()) {
+                Set<String> slicing = calleeGraph.slicingStr.get(sootClass);
+                FilterKey filter = new FilterKey(slicing, profile.key);
+                if (filter.isPaired()) {
+                    // 发现成对密钥, 进行零泄漏检测
+                    logging(packageName, "检测到云服务SDK: " + profile.packageName, LogCode.FOUNDAPI);
+                    request(filter, profile);
                 }
             }
         }
@@ -381,7 +385,7 @@ public class Main {
                     .append("] ")
                     .append(msg)
                     .append(System.getProperty("line.separator"));
-            //System.out.print(builder.toString());
+            System.out.print(builder.toString());
             writer.write(builder.toString());
             writer.flush();
             writer.close();
