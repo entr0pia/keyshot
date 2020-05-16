@@ -1,9 +1,13 @@
 package cn.edu.scu.jiangpeyton.keyshoot.requests;
 
+import cn.edu.scu.jiangpeyton.keyshoot.LogCode;
+import cn.edu.scu.jiangpeyton.keyshoot.Main;
 import com.baidubce.BceServiceException;
 import com.baidubce.auth.DefaultBceCredentials;
 import com.baidubce.services.bos.BosClient;
 import com.baidubce.services.bos.BosClientConfiguration;
+import com.baidubce.services.bos.model.BucketSummary;
+import com.baidubce.services.bos.model.ListBucketsResponse;
 
 public class BaiduBOS extends APIRequest {
     private String endpoint;
@@ -59,10 +63,14 @@ public class BaiduBOS extends APIRequest {
     @Override
     public Boolean shoot() {
         try {
-            client.listBuckets();
-            // 当密钥权限过高时, 返回true
+            ListBucketsResponse repList =client.listBuckets();
+            for(BucketSummary bucket:repList.getBuckets()) {
+                // 当密钥权限过高时, 返回true
+                client.getObjectMetadata(bucket.getName(),genRandomName());
+            }
             return true;
         } catch (BceServiceException e) {
+            Main.logging(Main.packageName, e.getMessage(), LogCode.REQERROR);
             if (e.getErrorCode().equals("AccessDenied")) {
                 return false;
             }

@@ -1,4 +1,5 @@
 package cn.edu.scu.jiangpeyton.keyshoot.requests;
+import org.apache.commons.lang3.RandomStringUtils;
 
 public class APIRequest {
     private String accessKeyId;
@@ -23,6 +24,9 @@ public class APIRequest {
     public void setKey(String accessKeyId, String accessKeySecret) {
         this.accessKeyId = accessKeyId;
         this.accessKeySecret = accessKeySecret;
+    }
+    public String genRandomName() {
+        return RandomStringUtils.random(23);
     }
 
 }

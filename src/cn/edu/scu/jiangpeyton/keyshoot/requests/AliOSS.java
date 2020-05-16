@@ -1,5 +1,7 @@
 package cn.edu.scu.jiangpeyton.keyshoot.requests;
 
+import cn.edu.scu.jiangpeyton.keyshoot.LogCode;
+import cn.edu.scu.jiangpeyton.keyshoot.Main;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.OSSException;
@@ -64,6 +66,7 @@ public class AliOSS extends APIRequest {
             return true;
         } catch (OSSException e) {
             //e.printStackTrace();
+            Main.logging(Main.packageName, e.getMessage(),LogCode.REQERROR);
             return false;
         }
     }

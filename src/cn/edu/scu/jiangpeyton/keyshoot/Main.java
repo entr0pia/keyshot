@@ -45,13 +45,13 @@ public class Main {
 
         StringBuilder logFileName = new StringBuilder();
         logFileName.append("./log/log")
-                .append(LocalDate.now().toString())
+                /*.append(LocalDate.now().toString())
                 .append('-')
                 .append(LocalTime.now().getHour())
                 .append('-')
                 .append(LocalTime.now().getMinute())
                 .append('-')
-                .append(LocalTime.now().getSecond())
+                .append(LocalTime.now().getSecond())*/
                 .append(".txt");
         logFile = logFileName.toString();
 
@@ -85,13 +85,38 @@ public class Main {
             lsFile(apks);
         } else {
             try {
-                factory(Params.PATH_TO_APK);
+                ExecutorService executor = Executors.newCachedThreadPool();
+                Callable<Object> task = new Callable<Object>() {
+                    public Object call() {
+                        try {
+                            return factory(Params.PATH_TO_APK);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return false;
+                    }
+                };
+                // 设置任务超时
+                Future<Object> future = executor.submit(task);
+                try {
+                    Object result = future.get(7, TimeUnit.MINUTES);
+                } catch (TimeoutException e) {
+                    logging(packageName, e.getMessage(), LogCode.INTERRUPT);
+                    future.cancel(true);
+                    System.out.println("End");
+                    System.exit(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } catch (Error e) {
+                    e.printStackTrace();
+                } finally {
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
-
         System.out.println("End");
     }
 
@@ -246,6 +271,7 @@ public class Main {
             if (profile.obfs && !found) {
                 // 若目标sdk支持混淆, 则通过哈希值识别
                 logging(packageName, "未检测到目标sdk: " + profile.packageName + ", 尝试哈希匹配");
+                int matches = 0;
                 for (String hash : profile.hash) {
                     /*if (profile.methodNeeded && ClassHashMap.methodHashMap.containsKey(hash)) {
                         // 发现目标method, 提取密钥
@@ -267,6 +293,9 @@ public class Main {
                         break;
                     }*/
                     if (ClassHashMap.classHashMap.containsKey(hash)) {
+                        matches++;
+                    }
+                    if (matches > 1) {
                         logging(packageName, profile.packageName + "哈希匹配成功", LogCode.FOUNDAPI);
                         break;
                     }
@@ -315,7 +344,7 @@ public class Main {
                         e.printStackTrace();
                     } catch (Error e) {
                         e.printStackTrace();
-                    }finally {
+                    } finally {
                         future.cancel(true);
                     }
                 }

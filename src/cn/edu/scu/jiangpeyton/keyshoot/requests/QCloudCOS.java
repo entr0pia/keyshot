@@ -1,5 +1,7 @@
 package cn.edu.scu.jiangpeyton.keyshoot.requests;
 
+import cn.edu.scu.jiangpeyton.keyshoot.LogCode;
+import cn.edu.scu.jiangpeyton.keyshoot.Main;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
@@ -33,6 +35,7 @@ public class QCloudCOS extends APIRequest {
             this.client.listBuckets();
             return true;
         } catch (CosServiceException e) {
+            Main.logging(Main.packageName, e.getMessage(), LogCode.REQERROR);
             if (e.getErrorCode().equals("AccessDenied")) {
                 return false;
             }
